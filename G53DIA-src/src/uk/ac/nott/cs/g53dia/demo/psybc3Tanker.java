@@ -1,4 +1,5 @@
-package uk.ac.nott.cs.g53dia.psybc3;
+
+package uk.ac.nott.cs.g53dia.demo;
 
 import uk.ac.nott.cs.g53dia.library.*;
 
@@ -15,7 +16,7 @@ import java.util.Random;
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-public class TestTanker extends Tanker {
+public class psybc3Tanker extends Tanker {
 
     private int size;
 
@@ -25,11 +26,11 @@ public class TestTanker extends Tanker {
     private int tankerY;
 
 
-    public TestTanker() {
+    public psybc3Tanker() {
 	    this(new Random());
     }
 
-    public TestTanker(Random r) {
+    public psybc3Tanker(Random r) {
 	    this.r = r;
 	    this.tankerSetup();
     }
@@ -61,7 +62,9 @@ public class TestTanker extends Tanker {
      */
     public Action senseAndAct(Cell[][] view, long timestep) {
 
-        System.out.println(view[view.length/2][view.length/2]);
+        //DEBUG: Gives current tile //System.out.println(view[view.length/2][view.length/2]);
+        //DEBUG: Gives the suspected location of the tanker //System.out.println("Suspected tanker position tankerX = " + tankerX + ", tankerY = " + tankerY);
+
         int tankerPosInView = view.length/2;
 
         for (int x = 0; x<view.length; x++) {
@@ -75,16 +78,18 @@ public class TestTanker extends Tanker {
         // If fuel tank is low and not at the fuel pump then move
     	// towards the fuel pump
         if ((getFuelLevel() <= MAX_FUEL/2) && !(getCurrentCell(view) instanceof FuelPump)) {
-            //System.out.println("Moving to fuel station");
+            System.out.println("Moving to fuel station");
             return new MoveTowardsAction(FUEL_PUMP_LOCATION); //TODO: I can't know the position of the tanker if I do this ??
         // If on a fuel pump and fuel tank is not full then refuel
         } else if( getCurrentCell(view) instanceof FuelPump && getFuelLevel() < MAX_FUEL ) {
-            //System.out.println("Refueling");
+            System.out.println("Refueling");
             return new RefuelAction();
         // Otherwise, move randomly
         } else {
-            //System.out.println("Random Movement");
-            return new MoveAction(r.nextInt(8));
+            System.out.println("Random Movement");
+            int move = r.nextInt(8);
+            updateTankerPos(move); //TODO: IF AN ACTION FAILS THEN THIS WILL BE WRONG
+            return new MoveAction(move);
         }
     }
 

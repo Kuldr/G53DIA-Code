@@ -1,6 +1,5 @@
-package uk.ac.nott.cs.g53dia.psybc3;
+package uk.ac.nott.cs.g53dia.demo;
 
-import uk.ac.nott.cs.g53dia.demo.DemoTanker;
 import uk.ac.nott.cs.g53dia.library.*;
 
 import java.util.Random;
@@ -22,13 +21,13 @@ import java.util.Random;
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
 
-public class TestSimulator {
+public class psybc3Simulator {
 
     /**
      * Time for which execution pauses so that GUI can update.
-     * Reducing this value causes the simula3tion to run faster.
+     * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 10;
+    private static int DELAY = 1000;
 	
     /**
      * Number of timesteps to execute
@@ -41,7 +40,7 @@ public class TestSimulator {
         // Create an environment
         Environment env = new Environment(Tanker.MAX_FUEL/2, r);
         // Create a tanker
-        Tanker tank = new TestTanker(r);
+        Tanker tank = new psybc3Tanker(r);
         // Create a GUI window to show the tanker
         TankerViewer tv = new TankerViewer(tank);
         tv.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
