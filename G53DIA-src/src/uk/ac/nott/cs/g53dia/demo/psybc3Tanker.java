@@ -101,6 +101,16 @@ public class psybc3Tanker extends Tanker {
         } else if( getCurrentCell(view) instanceof FuelPump && getFuelLevel() < MAX_FUEL ) {
             System.out.println("Refueling");
             return new RefuelAction();
+        // If on a station with a task and we have spare waste capacity collect the waste
+        } else if( getCurrentCell(view) instanceof Station && ((Station) getCurrentCell(view)).getTask() != null && getWasteCapacity() > 0) {
+            System.out.println("Collecting waste");
+            return new LoadWasteAction(((Station) getCurrentCell(view)).getTask());
+        // If there is a known station with a task go to it and we have spare waste capacity
+        } else if( closestStationWTask != null && getWasteCapacity() > 0) {
+            System.out.println("Moving towards Station with task");
+            int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
+            updateTankerPos(move);
+            return new MoveAction(move);
         // If on a well and have waste dispose of it
         } else if ( getCurrentCell(view) instanceof Well && getWasteLevel() > 0 ) {
             System.out.println("Disposing of waste");
@@ -109,16 +119,6 @@ public class psybc3Tanker extends Tanker {
         } else if ( closestWell != null && getWasteLevel() > 0 ) {
             System.out.println("Moving towards well");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY);
-            updateTankerPos(move);
-            return new MoveAction(move);
-        // If on a station with a task and we have spare waste capacity
-        } else if( getCurrentCell(view) instanceof Station && ((Station) getCurrentCell(view)).getTask() != null && getWasteCapacity() > 0) {
-            System.out.println("Collecting waste");
-            return new LoadWasteAction(((Station) getCurrentCell(view)).getTask());
-        // If there is a known station with a task go to it and we have spare waste capacity
-        } else if( closestStationWTask != null && getWasteCapacity() > 0) {
-            System.out.println("Moving towards Station with task");
-            int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
             updateTankerPos(move);
             return new MoveAction(move);
         // Otherwise, move diagonally
