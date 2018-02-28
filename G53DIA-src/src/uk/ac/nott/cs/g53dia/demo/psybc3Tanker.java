@@ -93,7 +93,7 @@ public class psybc3Tanker extends Tanker {
         // If fuel tank is lower than the distance to the fuel station and not at the fuel pump then move towards the fuel pump
         if( getFuelLevel() <= Math.ceil(closestFuelPump.distance*1.0015+1) && !(getCurrentCell(view) instanceof FuelPump) ){
             //Need to move towards the fuel station now
-            System.out.println("Moving towards fuel station");
+            System.out.println("Moving towards fuel pump");
             int move = directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY);
             updateTankerPos(move);
             return new MoveAction(move);
@@ -103,17 +103,21 @@ public class psybc3Tanker extends Tanker {
             return new RefuelAction();
         // If on a well and have waste dispose of it
         } else if ( getCurrentCell(view) instanceof Well && getWasteLevel() > 0 ) {
+            System.out.println("Disposing of waste");
             return new DisposeWasteAction();
         // If there is a known well and we have waste to dispose of go to it
         } else if ( closestWell != null && getWasteLevel() > 0 ) {
+            System.out.println("Moving towards well");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY);
             updateTankerPos(move);
             return new MoveAction(move);
         // If on a station with a task and we have spare waste capacity
         } else if( getCurrentCell(view) instanceof Station && ((Station) getCurrentCell(view)).getTask() != null && getWasteCapacity() > 0) {
+            System.out.println("Collecting waste");
             return new LoadWasteAction(((Station) getCurrentCell(view)).getTask());
         // If there is a known station with a task go to it and we have spare waste capacity
         } else if( closestStationWTask != null && getWasteCapacity() > 0) {
+            System.out.println("Moving towards Station with task");
             int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
             updateTankerPos(move);
             return new MoveAction(move);
@@ -259,7 +263,6 @@ public class psybc3Tanker extends Tanker {
                     Station s = (Station) envRep[x][y];
                     if( s.getTask() != null ){
                         //Only want to find stations with a task
-                        System.out.println("THERE IS A TASK");
                         if( closest == null ){
                             closest = new distanceToEnvRep();
                             closest.distance = distanceToPoint(x, y);
