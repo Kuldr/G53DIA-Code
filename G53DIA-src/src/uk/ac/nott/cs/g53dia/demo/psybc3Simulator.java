@@ -27,7 +27,7 @@ public class psybc3Simulator {
      * Time for which execution pauses so that GUI can update.
      * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 1000;
+    private static int DELAY = 0;
 	
     /**
      * Number of timesteps to execute
@@ -59,7 +59,7 @@ public class psybc3Simulator {
                 act.execute(env, tank);
 	    } catch (OutOfFuelException ofe) {
                 System.err.println(ofe.getMessage());
-		System.exit(-1);
+                System.exit(-1);
             } catch (ActionFailedException afe) {
                 System.err.println(afe.getMessage());
             }
