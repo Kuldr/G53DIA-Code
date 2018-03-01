@@ -27,6 +27,8 @@ public class psybc3Tanker extends Tanker {
     private int tankerXToUpdate;
     private int tankerYToUpdate;
 
+    private int diagonalDirection = 4;
+
     public psybc3Tanker() {
 	    this(new Random());
     }
@@ -90,44 +92,87 @@ public class psybc3Tanker extends Tanker {
         distanceToEnvRep closestStationWTask = findClosestTask();
         distanceToEnvRep closestWell = findClosestWell();
 
-        // If fuel tank is lower than the distance to the fuel station and not at the fuel pump then move towards the fuel pump
-        if( getFuelLevel() <= Math.ceil(closestFuelPump.distance*1.0015+1) && !(getCurrentCell(view) instanceof FuelPump) ){
-            //Need to move towards the fuel station now
-            System.out.println("Moving towards fuel pump");
-            int move = directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY);
-            updateTankerPos(move);
-            return new MoveAction(move);
-        // If on a fuel pump and fuel tank is not full then refuel
-        } else if( getCurrentCell(view) instanceof FuelPump && getFuelLevel() < MAX_FUEL ) {
-            System.out.println("Refueling");
+        //Evaluate each situation
+        boolean checkMoveToFuelPump     = closestFuelPump != null
+                                            && getFuelLevel() <= Math.ceil(closestFuelPump.distance*1.0015+1)
+                                            && !(getCurrentCell(view) instanceof FuelPump);
+                                        // Check if there is enough fuel to get to the nearest fuel pump so long as you are not on a fuel pump
+        boolean checkRefuel             = getCurrentCell(view) instanceof FuelPump
+                                            && getFuelLevel() < MAX_FUEL;
+                                        // Check if you are on a fuel pump and you have less than max fuel
+        boolean checkCollectWaste       = getCurrentCell(view) instanceof Station
+                                            && ((Station) getCurrentCell(view)).getTask() != null
+                                            && getWasteCapacity() > 0;
+                                        // Check if you are on a station, the station has a task and you have capacity to store the waste
+        boolean checkMoveToStationWTask = closestStationWTask != null
+                                            && getWasteCapacity() > 0
+                                            && !isPointFurtherThanFuel(closestStationWTask.envX, closestStationWTask.envY,
+                                                                            closestFuelPump.envX, closestFuelPump.envY);
+                                        // Check if there is a nearby station with a task, you have waste capacity
+                                        // and you have enough fuel to get to the station and to the next fuel pump w/o running out
+        boolean checkDisposeWaste       = getCurrentCell(view) instanceof Well
+                                            && getWasteLevel() > 0;
+                                        // Check if you are on a well and there is waste to get rid of
+        boolean checkMoveToWell         = closestWell != null
+                                            && getWasteLevel() > 0
+                                            && !isPointFurtherThanFuel(closestWell.envX, closestWell.envY,
+                                                                            closestFuelPump.envX, closestFuelPump.envY);
+                                        // Check if there is a nearby well, you have waste to get rid of
+                                        // and you have enough fuel to get to the well and to the next fuel pump w/o running out
+        boolean checkStationCloserWell  = closestStationWTask != null
+                                            && closestWell != null
+                                            && closestStationWTask.distance <= closestWell.distance;
+                                        // Check if the nearest station with a task is nearer than the nearest well
+        boolean checkAtWasteCapacity    = getWasteCapacity() <= 0
+                                            && closestWell != null;
+
+        //Priority 1: Actions that require you to be on the tile at that time,
+        //              unlikely to happen randomly but if relevant should be resolved as.
+        //              These task typically will be invoked as we have moved towards these tiles recently to try and complete another task
+        //              By completing these task it will "end" the inferred long term behaviour of some tasks
+        //              Note: As they require to be on a specific tile there are no clashes in this tier that need to be resolved.
+        //              If a priority 1 action is completed then set the diagonal for travel to a new diagonal
+        if( checkRefuel ){
+            diagonalDirection = newDiagonalDirection();
             return new RefuelAction();
-        // If on a station with a task and we have spare waste capacity collect the waste
-        } else if( getCurrentCell(view) instanceof Station && ((Station) getCurrentCell(view)).getTask() != null && getWasteCapacity() > 0) {
-            System.out.println("Collecting waste");
+        } else if ( checkCollectWaste ){
+            diagonalDirection = newDiagonalDirection();
             return new LoadWasteAction(((Station) getCurrentCell(view)).getTask());
-        // If there is a known station with a task go to it and we have spare waste capacity
-        } else if( closestStationWTask != null && getWasteCapacity() > 0) {
-            System.out.println("Moving towards Station with task");
-            int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
-            updateTankerPos(move);
-            return new MoveAction(move);
-        // If on a well and have waste dispose of it
-        } else if ( getCurrentCell(view) instanceof Well && getWasteLevel() > 0 ) {
-            System.out.println("Disposing of waste");
+        } else if ( checkDisposeWaste ){
+            diagonalDirection = newDiagonalDirection();
             return new DisposeWasteAction();
-        // If there is a known well and we have waste to dispose of go to it
-        } else if ( closestWell != null && getWasteLevel() > 0 ) {
-            System.out.println("Moving towards well");
-            int move = directionToMoveTowards(closestWell.envX, closestWell.envY);
-            updateTankerPos(move);
-            return new MoveAction(move);
-        // Otherwise, move diagonally
-        } else {
-            System.out.println("Diagonal Movement");
-            int move = 4;//r.nextInt(8);
-            updateTankerPos(move);
-            return new MoveAction(move);
         }
+
+        //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
+        if( checkMoveToFuelPump ){
+            return directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY);
+        }
+
+        //Priority 3: Maintaining non critical resources but they need to be taken care of before any further actions can take place
+        if( checkAtWasteCapacity ){
+            return directionToMoveTowards(closestWell.envX, closestWell.envY);
+        }
+
+        //Priority 4: Long term goals to complete the overall task
+        //              Only achievable if you have the required resources
+        //              Clashes are resolved by going to the closest of them, with Stations winning draws as collecting waste gains points
+        if( checkMoveToStationWTask && checkMoveToWell ){
+            if( checkStationCloserWell ){
+                return directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
+            } else {
+                return directionToMoveTowards(closestWell.envX, closestWell.envY);
+            }
+        } else if ( checkMoveToStationWTask ){
+            return directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
+        } else if ( checkMoveToWell ){
+            return directionToMoveTowards(closestWell.envX, closestWell.envY);
+        }
+
+        //Priority 5: All of the perceptions have failed to result in an action so explore the environment
+        //              This is done with the idea to increase our knowledge and potentially find a task
+        int move = diagonalDirection;
+        updateTankerPos(move);
+        return new MoveAction(move);
     }
 
     private int coordToEnvIndex(int c){
@@ -170,9 +215,49 @@ public class psybc3Tanker extends Tanker {
         }
     }
 
-    private int distanceToPoint(int envIndexX, int envIndexY){
-        int dx = Math.abs(envIndexX - coordToEnvIndex(tankerX));
-        int dy = Math.abs(envIndexY - coordToEnvIndex(tankerY));
+    private int newDiagonalDirection(){
+        //Note this can randomly generate the same diagonal as previous
+
+        //Loop until chosen a diagonal
+        while(true){
+            int randInt = r.nextInt(8);
+            switch (randInt) {
+                case MoveAction.NORTH:
+                    break;
+                case MoveAction.SOUTH:
+                    break;
+                case MoveAction.EAST:
+                    break;
+                case MoveAction.WEST:
+                    break;
+                case MoveAction.NORTHEAST:
+                case MoveAction.NORTHWEST:
+                case MoveAction.SOUTHEAST:
+                case MoveAction.SOUTHWEST:
+                    //If its any of the diagonals return it
+                    return randInt;
+            }
+        }
+    }
+
+    private Boolean isPointFurtherThanFuel(int envIndexX, int envIndexY, int envFuelX, int envFuelY){
+        int distanceToPoint = distanceToPointFromCurrentPos(envIndexX, envIndexY);
+        int distanceFromPointToFuel = distanceBetweenPoints(envIndexX, envIndexY, envFuelX, envFuelY);
+        int totalDistance = distanceToPoint + distanceFromPointToFuel;
+        if( getFuelLevel() >= totalDistance*1.0015+1 ){
+            return false;
+        }
+
+        return true;
+    }
+
+    private int distanceToPointFromCurrentPos(int envIndexX, int envIndexY){
+        return distanceBetweenPoints(envIndexX, envIndexY, coordToEnvIndex(tankerX), coordToEnvIndex(tankerY));
+    }
+
+    private int distanceBetweenPoints(int envIndexX1, int envIndexY1, int envIndexX2, int envIndexY2){
+        int dx = Math.abs(envIndexX1 - envIndexX2);
+        int dy = Math.abs(envIndexY1 - envIndexY2);
 
         if( dx >= dy ){
             return dx;
@@ -181,33 +266,41 @@ public class psybc3Tanker extends Tanker {
         }
     }
 
-    private int directionToMoveTowards(int envIndexX, int envIndexY){
+    private Action directionToMoveTowards(int envIndexX, int envIndexY){
         int dx = envIndexX - coordToEnvIndex(tankerX);
         int dy = envIndexY - coordToEnvIndex(tankerY);
 
+        int move = 0;
+
         if( dx < 0 && dy > 0 ){
-            return 5;
+            move = 5;
         } else if ( dx == 0 && dy > 0 ){
-            return 0;
+            move = 0;
         } else if ( dx > 0 && dy > 0 ){
-            return 4;
+            move = 4;
         } else if ( dx < 0 && dy == 0 ){
-            return 3;
+            move = 3;
         } else if ( dx > 0 && dy == 0 ){
-            return 2;
+            move = 2;
         } else if ( dx < 0 && dy < 0 ){
-            return 7;
+            move = 7;
         } else if ( dx == 0 && dy < 0 ){
-            return 1;
+            move = 1;
         } else if ( dx > 0 && dy < 0 ) {
-            return 6;
+            move = 6;
         }
 
-        //Can't reach here its to suppress warning
-        return 0;
+        updateTankerPos(move);
+        return new MoveAction(move);
     }
 
     private static class distanceToEnvRep{
+        public distanceToEnvRep(int distance, int envX, int envY){
+            this.distance = distance;
+            this.envX = envX;
+            this.envY = envY;
+        }
+
         int distance;
         int envX;
         int envY;
@@ -219,14 +312,9 @@ public class psybc3Tanker extends Tanker {
             for(int y = 0; y < envRep[x].length; y++) {
                 if( envRep[x][y] instanceof FuelPump ){
                     if( closest == null ){
-                        closest = new distanceToEnvRep();
-                        closest.distance = distanceToPoint(x, y);
-                        closest.envX = x;
-                        closest.envY = y;
-                    } else if ( closest.distance > distanceToPoint(x, y) ){
-                        closest.distance = distanceToPoint(x, y);
-                        closest.envX = x;
-                        closest.envY = y;
+                        closest = new distanceToEnvRep(distanceToPointFromCurrentPos(x, y), x, y);
+                    } else if ( closest.distance > distanceToPointFromCurrentPos(x, y) ){
+                        closest = new distanceToEnvRep(distanceToPointFromCurrentPos(x, y), x, y);
                     }
                 }
             }
@@ -240,14 +328,9 @@ public class psybc3Tanker extends Tanker {
             for(int y = 0; y < envRep[x].length; y++) {
                 if( envRep[x][y] instanceof Well ){
                     if( closest == null ){
-                        closest = new distanceToEnvRep();
-                        closest.distance = distanceToPoint(x, y);
-                        closest.envX = x;
-                        closest.envY = y;
-                    } else if ( closest.distance > distanceToPoint(x, y) ){
-                        closest.distance = distanceToPoint(x, y);
-                        closest.envX = x;
-                        closest.envY = y;
+                        closest = new distanceToEnvRep(distanceToPointFromCurrentPos(x, y), x, y);
+                    } else if ( closest.distance > distanceToPointFromCurrentPos(x, y) ){
+                        closest = new distanceToEnvRep(distanceToPointFromCurrentPos(x, y), x, y);
                     }
                 }
             }
@@ -255,23 +338,18 @@ public class psybc3Tanker extends Tanker {
         return closest;
     }
 
-    private distanceToEnvRep findClosestTask(){
+    private distanceToEnvRep findClosestTask() {
         distanceToEnvRep closest = null;
-        for(int x = 0; x < envRep.length; x++){
-            for(int y = 0; y < envRep[x].length; y++) {
-                if( envRep[x][y] instanceof Station ){
+        for (int x = 0; x < envRep.length; x++) {
+            for (int y = 0; y < envRep[x].length; y++) {
+                if (envRep[x][y] instanceof Station) {
                     Station s = (Station) envRep[x][y];
-                    if( s.getTask() != null ){
+                    if (s.getTask() != null) {
                         //Only want to find stations with a task
                         if( closest == null ){
-                            closest = new distanceToEnvRep();
-                            closest.distance = distanceToPoint(x, y);
-                            closest.envX = x;
-                            closest.envY = y;
-                        } else if ( closest.distance > distanceToPoint(x, y) ){
-                            closest.distance = distanceToPoint(x, y);
-                            closest.envX = x;
-                            closest.envY = y;
+                            closest = new distanceToEnvRep(distanceToPointFromCurrentPos(x, y), x, y);
+                        } else if ( closest.distance > distanceToPointFromCurrentPos(x, y) ){
+                            closest = new distanceToEnvRep(distanceToPointFromCurrentPos(x, y), x, y);
                         }
                     }
 
