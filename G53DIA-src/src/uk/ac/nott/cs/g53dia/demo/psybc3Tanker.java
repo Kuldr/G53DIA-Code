@@ -4,17 +4,6 @@ import uk.ac.nott.cs.g53dia.library.*;
 
 import java.util.Random;
 
-/**
- * A simple example Tanker
- * 
- * @author Julian Zappala
- */
-/*
- * Copyright (c) 2011 Julian Zappala
- * 
- * See the file "license.terms" for information on usage and redistribution
- * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
- */
 public class psybc3Tanker extends Tanker {
 
     private int size;
@@ -42,8 +31,9 @@ public class psybc3Tanker extends Tanker {
      * can initialise any settings that it needs too.
      */
     private void tankerSetup(){
+
         //Get the size of the environment and create a view array of the whole environment
-        size = 1000; // TODO: This is arbitrary as fuck //Tanker.MAX_FUEL/2; //TODO: 1. Can I pass find this info, 2 can I pass this in by modifying the simulator.
+        size = 1000; //This is based upon the number of timesteps
         envRep = new Cell[2*size+1][2*size+1];
         // Generate initial environment
         for (int x = -size; x <= size; x++) {
@@ -64,7 +54,6 @@ public class psybc3Tanker extends Tanker {
      * point it returns to a fuel pump to refuel.
      */
     public Action senseAndAct(Cell[][] view, long timestep) {
-
 
         if( !actionFailed ) {
             // Action passed update the system
@@ -124,7 +113,14 @@ public class psybc3Tanker extends Tanker {
                                             && closestStationWTask.distance <= closestWell.distance;
                                         // Check if the nearest station with a task is nearer than the nearest well
         boolean checkAtWasteCapacity    = getWasteCapacity() <= 0
-                                            && closestWell != null;
+                                            && closestWell != null
+                                            && !isPointFurtherThanFuel(closestWell.envX, closestWell.envY,
+                                                                            closestFuelPump.envX, closestFuelPump.envY);
+                                        // Check if at max waste capacity and then aim to get rid of it if possible
+        boolean checkCapacityIsGETask   = closestStationWTask != null
+                                            && getWasteCapacity() >= ((Station) envRep[closestStationWTask.envX][closestStationWTask.envY]).getTask().getWasteRemaining();
+                                        // Check if there is more waste at the station than there is waste capacity
+                                        // As the task will never have more than the max waste capacity you can't have stations that are forever ignored
 
         //Priority 1: Actions that require you to be on the tile at that time,
         //              unlikely to happen randomly but if relevant should be resolved as.
@@ -133,43 +129,57 @@ public class psybc3Tanker extends Tanker {
         //              Note: As they require to be on a specific tile there are no clashes in this tier that need to be resolved.
         //              If a priority 1 action is completed then set the diagonal for travel to a new diagonal
         if( checkRefuel ){
+            System.out.println("Refueling");
             diagonalDirection = newDiagonalDirection();
             return new RefuelAction();
         } else if ( checkCollectWaste ){
+            System.out.println("Collecting Waste");
             diagonalDirection = newDiagonalDirection();
             return new LoadWasteAction(((Station) getCurrentCell(view)).getTask());
         } else if ( checkDisposeWaste ){
+            System.out.println("Disposing Waste");
             diagonalDirection = newDiagonalDirection();
             return new DisposeWasteAction();
         }
 
         //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
         if( checkMoveToFuelPump ){
+            System.out.println("Moving to Fuel Pump");
             return directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY);
         }
 
         //Priority 3: Maintaining non critical resources but they need to be taken care of before any further actions can take place
         if( checkAtWasteCapacity ){
+            System.out.println("Moving to Well as waste tank is full");
             return directionToMoveTowards(closestWell.envX, closestWell.envY);
         }
 
         //Priority 4: Long term goals to complete the overall task
         //              Only achievable if you have the required resources
         //              Clashes are resolved by going to the closest of them, with Stations winning draws as collecting waste gains points
+        if( !checkCapacityIsGETask && checkMoveToWell ){
+            System.err.println("Moving towards Well as we don't have capacity for the closest station");
+            return directionToMoveTowards(closestWell.envX, closestWell.envY);
+        }
         if( checkMoveToStationWTask && checkMoveToWell ){
             if( checkStationCloserWell ){
+                System.out.println("Moving towards Station as it is closer than Well");
                 return directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
             } else {
+                System.out.println("Moving towards Well as it is closer than Station");
                 return directionToMoveTowards(closestWell.envX, closestWell.envY);
             }
         } else if ( checkMoveToStationWTask ){
+            System.out.println("Moving towards Station with task");
             return directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY);
         } else if ( checkMoveToWell ){
+            System.out.println("Moving towards Well");
             return directionToMoveTowards(closestWell.envX, closestWell.envY);
         }
 
         //Priority 5: All of the perceptions have failed to result in an action so explore the environment
         //              This is done with the idea to increase our knowledge and potentially find a task
+        System.out.println("Moving in a diagonal");
         int move = diagonalDirection;
         updateTankerPos(move);
         return new MoveAction(move);
@@ -223,11 +233,8 @@ public class psybc3Tanker extends Tanker {
             int randInt = r.nextInt(8);
             switch (randInt) {
                 case MoveAction.NORTH:
-                    break;
                 case MoveAction.SOUTH:
-                    break;
                 case MoveAction.EAST:
-                    break;
                 case MoveAction.WEST:
                     break;
                 case MoveAction.NORTHEAST:
@@ -244,7 +251,7 @@ public class psybc3Tanker extends Tanker {
         int distanceToPoint = distanceToPointFromCurrentPos(envIndexX, envIndexY);
         int distanceFromPointToFuel = distanceBetweenPoints(envIndexX, envIndexY, envFuelX, envFuelY);
         int totalDistance = distanceToPoint + distanceFromPointToFuel;
-        if( getFuelLevel() >= totalDistance*1.0015+1 ){
+        if( getFuelLevel() >= totalDistance*1.0015+1 ) {
             return false;
         }
 
@@ -360,8 +367,3 @@ public class psybc3Tanker extends Tanker {
     }
 
 }
-
-/*TODO: Work out how far away the fuel station is
-*       If the fuel station is about to become to far away
-*       (Distance to the fuel station * 0.0015 for failable actions)
-*       Move towards the fuel station */
