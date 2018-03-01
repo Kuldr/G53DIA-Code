@@ -158,7 +158,7 @@ public class psybc3Tanker extends Tanker {
         //              Only achievable if you have the required resources
         //              Clashes are resolved by going to the closest of them, with Stations winning draws as collecting waste gains points
         if( !checkCapacityIsGETask && checkMoveToWell ){
-            System.err.println("Moving towards Well as we don't have capacity for the closest station");
+            System.out.println("Moving towards Well as we don't have capacity for the closest station");
             return directionToMoveTowards(closestWell.envX, closestWell.envY);
         }
         if( checkMoveToStationWTask && checkMoveToWell ){
