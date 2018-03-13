@@ -16,7 +16,7 @@ import java.util.Random;
 /*
  * Copyright (c) 2005 Neil Madden.
  * Copyright (c) 2011 Julian Zappala (jxz@cs.nott.ac.uk)
- * 
+ *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
@@ -27,7 +27,7 @@ public class psybc3Simulator {
      * Time for which execution pauses so that GUI can update.
      * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 0;
+    private static int DELAY = 10;
 	
     /**
      * Number of timesteps to execute
@@ -69,6 +69,8 @@ public class psybc3Simulator {
 		Thread.sleep(DELAY);
 	    } catch (Exception e) { }
         }
+        System.out.println("Finished");
+        System.out.println("Final Score = " + tank.getScore());
     }
 
 	
