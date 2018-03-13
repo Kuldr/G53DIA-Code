@@ -2,6 +2,8 @@ package uk.ac.nott.cs.g53dia.multidemo;
 
 import uk.ac.nott.cs.g53dia.multilibrary.Fleet;
 
+import java.util.Random;
+
 public class psybc3Fleet extends Fleet {
 
     /**
@@ -10,9 +12,12 @@ public class psybc3Fleet extends Fleet {
     private static int FLEET_SIZE = 3;
 
     public psybc3Fleet() {
-	// Create the tankers
-	for (int i=0; i<FLEET_SIZE; i++) {
-	    this.add(new psybc3TankerSingle());
-	}
+        // Creation/Seeding of the random function
+        Random r = new Random();
+
+        // Create the tankers
+        for (int i=0; i<FLEET_SIZE; i++) {
+            this.add(new psybc3TankerSingle(r));
+        }
     }
 }
