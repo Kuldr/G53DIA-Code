@@ -45,6 +45,8 @@ public class psybc3TankerSingle extends Tanker {
         //Initialise the tanker to the origin
         tankerX = 0;
         tankerY = 0;
+
+        diagonalDirection = newDiagonalDirection();
     }
 
     /*

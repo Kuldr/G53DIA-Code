@@ -24,7 +24,7 @@ public class psybc3Simulator {
      * Time for which execution pauses so that GUI can update.
      * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 10;
+    private static int DELAY = 100;
 	
     /**
      * Number of timesteps to execute
@@ -35,8 +35,11 @@ public class psybc3Simulator {
     public static void main(String[] args) {
         // Create an environment
         Environment env = new Environment(Tanker.MAX_FUEL/2);
+
         //Create a fleet
-        Fleet fleet = new psybc3Fleet();
+//        Fleet fleet = new psybc3Fleet();
+        Fleet fleet = new multiFleet();
+
         // Create a GUI window to show the fleet
         TankerViewer tv = new TankerViewer(fleet);
         tv.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
@@ -69,3 +72,5 @@ public class psybc3Simulator {
     }
 	
 }
+
+//TODO: REMOVE THE PRINT STATEMENTS OR WRAP THEM IN DEBUGGING

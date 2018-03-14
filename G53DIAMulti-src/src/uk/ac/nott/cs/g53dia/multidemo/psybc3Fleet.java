@@ -9,7 +9,7 @@ public class psybc3Fleet extends Fleet {
     /**
      * Number of tankers in the fleet
      */
-    private static int FLEET_SIZE = 3;
+    private static int FLEET_SIZE = 10;
 
     public psybc3Fleet() {
         // Creation/Seeding of the random function
