@@ -65,9 +65,9 @@ public class psybc3TankerSingle extends Tanker {
 
         envRep = updateEnvRep(envRep, view, tankerX, tankerY, size);
 
-        sharedTankerMethods.distanceToEnvRep closestFuelPump = findClosestFuelPump(envRep, tankerX, tankerY, size);
-        sharedTankerMethods.distanceToEnvRep closestStationWTask = findClosestTask(envRep, tankerX, tankerY, size);
-        sharedTankerMethods.distanceToEnvRep closestWell = findClosestWell(envRep, tankerX, tankerY, size);
+        distanceToEnvRep closestFuelPump = findClosestFuelPump(envRep, tankerX, tankerY, size);
+        distanceToEnvRep closestStationWTask = findClosestTask(envRep, tankerX, tankerY, size);
+        distanceToEnvRep closestWell = findClosestWell(envRep, tankerX, tankerY, size);
 
         //Evaluate each situation
         boolean checkMoveToFuelPump     = closestFuelPump != null
