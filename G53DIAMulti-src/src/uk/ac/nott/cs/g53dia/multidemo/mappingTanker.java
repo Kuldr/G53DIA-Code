@@ -50,7 +50,7 @@ public class mappingTanker extends Tanker {
         tankerYToUpdate = tankerY;
 
         //Update the environment Representation
-        fleet.updateEnvRep(view, tankerX, tankerY);
+        fleet.processView(view, tankerX, tankerY);
 
         //TODO: Search unless low on fuel, in which case refuel and return to the search point
 

@@ -34,15 +34,9 @@ public class psybc3TankerSingle extends Tanker {
      */
     private void tankerSetup(){
 
-        //Get the size of the environment and create a view array of the whole environment
+        //Initialise the shared view of the environment
         size = 1000; //This is based upon the number of timesteps
-        envRep = new Cell[2*size+1][2*size+1];
-        // Generate initial environment
-        for (int x = -size; x <= size; x++) {
-            for (int y = -size; y <= size; y++) {
-                envRep[coordToEnvIndex(x, size)][coordToEnvIndex(y, size)] = null;
-            }
-        }
+        envRep = envRepSetup(size);
 
         //Initialise the tanker to the origin
         tankerX = 0;
@@ -69,17 +63,7 @@ public class psybc3TankerSingle extends Tanker {
         tankerXToUpdate = tankerX;
         tankerYToUpdate = tankerY;
 
-        int tankerPosInView = view.length/2;
-        for (int x = 0; x<view.length; x++) {
-            for (int y = 0; y<view[x].length; y++) {
-                int xCoord = coordToEnvIndex(viewIndexToCoord(x-tankerPosInView, tankerX), size);
-                int yCoord = coordToEnvIndex(viewIndexToCoord(tankerPosInView-y, tankerY), size);
-                if( xCoord < envRep.length && xCoord >= 0 && yCoord < envRep.length && yCoord >= 0 ) {
-                    //If xCoord and yCoord are in the range update the view
-                    envRep[xCoord][yCoord] = view[x][y];
-                }
-            }
-        }
+        envRep = updateEnvRep(envRep, view, tankerX, tankerY, size);
 
         sharedTankerMethods.distanceToEnvRep closestFuelPump = findClosestFuelPump(envRep, tankerX, tankerY, size);
         sharedTankerMethods.distanceToEnvRep closestStationWTask = findClosestTask(envRep, tankerX, tankerY, size);

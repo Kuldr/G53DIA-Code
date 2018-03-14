@@ -188,4 +188,31 @@ public class sharedTankerMethods {
                 return 0; //Move action is either invalid so won't move or Y doesn't change
         }
     }
+
+    public static Cell[][] updateEnvRep(Cell[][] envRep, Cell[][] view, int tankerX, int tankerY, int size){
+        int tankerPosInView = view.length/2;
+        for (int x = 0; x<view.length; x++) {
+            for (int y = 0; y<view[x].length; y++) {
+                int xCoord = coordToEnvIndex(viewIndexToCoord(x-tankerPosInView, tankerX), size);
+                int yCoord = coordToEnvIndex(viewIndexToCoord(tankerPosInView-y, tankerY), size);
+                if( xCoord < envRep.length && xCoord >= 0 && yCoord < envRep.length && yCoord >= 0 ) {
+                    //If xCoord and yCoord are in the range update the view
+                    envRep[xCoord][yCoord] = view[x][y];
+                }
+            }
+        }
+        return envRep;
+    }
+
+    public static Cell[][] envRepSetup(int size) {
+        //Create a view array of the whole environment
+        Cell[][] envRep = new Cell[2*size+1][2*size+1];
+        // Generate initial environment
+        for (int x = -size; x <= size; x++) {
+            for (int y = -size; y <= size; y++) {
+                envRep[coordToEnvIndex(x, size)][coordToEnvIndex(y, size)] = null;
+            }
+        }
+        return envRep;
+    }
 }
