@@ -26,7 +26,7 @@ public class psybc3Simulator {
      * Time for which execution pauses so that GUI can update.
      * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 0;
+    private static int DELAY = 100;
 	
     /**
      * Number of timesteps to execute
@@ -43,8 +43,8 @@ public class psybc3Simulator {
         Environment env = new Environment(Tanker.MAX_FUEL/2, r);
 
         //Create a fleet
-        Fleet fleet = new psybc3Fleet(r);
-//        Fleet fleet = new multiFleet(r);
+//        Fleet fleet = new psybc3Fleet(r);
+        Fleet fleet = new multiFleet(r);
 
         // Create a GUI window to show the fleet
         TankerViewer tv = new TankerViewer(fleet);
