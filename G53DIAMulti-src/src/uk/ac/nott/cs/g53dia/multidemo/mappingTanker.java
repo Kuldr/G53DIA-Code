@@ -95,9 +95,9 @@ public class mappingTanker extends Tanker {
             case SOUTHEAST:
                 return NORTH;
             case NORTH:
-                return NORTHWEST;
+                return NORTHEAST;
             default:
-                return NORTHWEST;
+                return NORTHEAST;
         }
     }
 
