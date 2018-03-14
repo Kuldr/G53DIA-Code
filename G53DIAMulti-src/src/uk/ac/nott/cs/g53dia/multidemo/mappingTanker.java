@@ -68,11 +68,9 @@ public class mappingTanker extends Tanker {
         //TODO: If low on fuel need to refuel and return to the search point
 
 
-        //TODO: I THINK I MESSED UP THE DIRECTIONS :(
         int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
                                             coordToEnvIndex(moveTowardsY, fleet.getSize()),
                                             tankerX, tankerY, fleet.getSize());
-
         tankerXToUpdate += updateTankerXPos(move);
         tankerYToUpdate += updateTankerYPos(move);
         return new MoveAction(move);
