@@ -113,10 +113,10 @@ public class mappingTanker extends Tanker {
                 return -tankerX; //Flip the sign of the x coord to move towards
             case(NORTHEAST):
             case(SOUTHEAST):
-                return tankerX+VIEW_RANGE; //Move outside the current view
+                return tankerX+2*VIEW_RANGE; //Move outside the current view
             case(NORTHWEST):
             case(SOUTHWEST):
-                return tankerX-VIEW_RANGE; //Move outside the current view
+                return tankerX-2*VIEW_RANGE; //Move outside the current view
             default:
                 return tankerX; //Move action is either invalid so won't move or X doesn't change
         }
@@ -129,16 +129,12 @@ public class mappingTanker extends Tanker {
                 return -tankerY;
             case(NORTHWEST):
             case(NORTHEAST):
-                return tankerY+VIEW_RANGE;  //Move outside the current view
+                return tankerY+2*VIEW_RANGE;  //Move outside the current view
             case(SOUTHWEST):
             case(SOUTHEAST):
-                return tankerY-VIEW_RANGE;  //Move outside the current view
+                return tankerY-2*VIEW_RANGE;  //Move outside the current view
             default:
                 return tankerY; //Move action is either invalid so won't move or Y doesn't change
         }
     }
 }
-
-//State: Diagonal -> Straight -> Diagonal
-//Diagonal is move towards current X, Y + VIEW_RANGE (size of view)
-//Straight is move towards current X, Y but one of them is now -ive
