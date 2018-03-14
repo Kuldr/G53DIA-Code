@@ -45,6 +45,8 @@ public class mappingTanker extends Tanker {
     @Override
     public Action senseAndAct(Cell[][] view, long timestep) {
 
+        //TODO: OMG HELP THIS IS AWFUL, VERY EASY TO GET STUCK IN A LOOP BUT HOW TO STAY SYSTEMATIC
+
         if( !actionFailed ) {
             // Action passed update the system
             tankerX = tankerXToUpdate;
@@ -66,6 +68,8 @@ public class mappingTanker extends Tanker {
         }
 
         distanceToEnvRep closestFuelPump = findClosestFuelPump(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
+
+        //TODO: Move Booleans into the shared tanker??
 
         //Evaluate each situation
         boolean checkMoveToFuelPump = closestFuelPump != null
