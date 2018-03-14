@@ -65,9 +65,36 @@ public class mappingTanker extends Tanker {
             updateCoordsToMoveTo();
         }
 
-        //TODO: If low on fuel need to refuel and return to the search point
+        distanceToEnvRep closestFuelPump = findClosestFuelPump(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
 
+        //Evaluate each situation
+        boolean checkMoveToFuelPump = closestFuelPump != null
+                                        && getFuelLevel() <= Math.ceil(closestFuelPump.distance*1.0015+1)
+                                        && !(getCurrentCell(view) instanceof FuelPump);
+                                      // Check if there is enough fuel to get to the nearest fuel pump so long as you are not on a fuel pump
+        boolean checkRefuel         = getCurrentCell(view) instanceof FuelPump
+                                        && getFuelLevel() < MAX_FUEL;
+                                      // Check if you are on a fuel pump and you have less than max fuel
 
+        //TODO: MAKE REFUELING RETURN TO THE ORIGINAL POINT ALONG THE ROUTE
+
+        //Priority 1: Actions that require you to be on the tile at that time,
+        //              unlikely to happen randomly but if relevant should be resolved as.
+        //              These task typically will be invoked as we have moved towards these tiles recently to try and complete another task
+        //              By completing these task it will "end" the inferred long term behaviour of some tasks
+        //              Note: As they require to be on a specific tile there are no clashes in this tier that need to be resolved.
+        if( checkRefuel ) {
+            return new RefuelAction();
+        }
+        //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
+        if( checkMoveToFuelPump ){
+            int move = directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, fleet.getSize());
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
+            return new MoveAction(move);
+        }
+        //Priority 3: This agents only task is to explore for the benefit off all other agents
+        //              As nothing else is taking priority complete this task
         int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
                                             coordToEnvIndex(moveTowardsY, fleet.getSize()),
                                             tankerX, tankerY, fleet.getSize());

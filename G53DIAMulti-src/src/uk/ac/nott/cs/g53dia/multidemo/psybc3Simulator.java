@@ -26,7 +26,7 @@ public class psybc3Simulator {
      * Time for which execution pauses so that GUI can update.
      * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 100;
+    private static int DELAY = 0;
 	
     /**
      * Number of timesteps to execute
