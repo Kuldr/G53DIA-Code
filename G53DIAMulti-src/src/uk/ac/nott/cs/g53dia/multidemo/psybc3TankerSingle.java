@@ -153,7 +153,8 @@ public class psybc3TankerSingle extends Tanker {
         if( checkMoveToFuelPump ){
             System.out.println("Moving to Fuel Pump");
             int move = directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, size);
-            updateTankerPos(move);
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         }
 
@@ -161,7 +162,8 @@ public class psybc3TankerSingle extends Tanker {
         if( checkAtWasteCapacity ){
             System.out.println("Moving to Well as waste tank is full");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
-            updateTankerPos(move);
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         }
 
@@ -171,30 +173,35 @@ public class psybc3TankerSingle extends Tanker {
         if( !checkCapacityIsGETask && checkMoveToWell ){
             System.out.println("Moving towards Well as we don't have capacity for the closest station");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
-            updateTankerPos(move);
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         }
         if( checkMoveToStationWTask && checkMoveToWell ){
             if( checkStationCloserWell ){
                 System.out.println("Moving towards Station as it is closer than Well");
                 int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY, tankerX, tankerY, size);
-                updateTankerPos(move);
+                tankerXToUpdate += updateTankerXPos(move);
+                tankerYToUpdate += updateTankerYPos(move);
                 return new MoveAction(move);
             } else {
                 System.out.println("Moving towards Well as it is closer than Station");
                 int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
-                updateTankerPos(move);
+                tankerXToUpdate += updateTankerXPos(move);
+                tankerYToUpdate += updateTankerYPos(move);
                 return new MoveAction(move);
             }
         } else if ( checkMoveToStationWTask ){
             System.out.println("Moving towards Station with task");
             int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY, tankerX, tankerY, size);
-            updateTankerPos(move);
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         } else if ( checkMoveToWell ){
             System.out.println("Moving towards Well");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
-            updateTankerPos(move);
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         }
 
@@ -202,36 +209,8 @@ public class psybc3TankerSingle extends Tanker {
         //              This is done with the idea to increase our knowledge and potentially find a task
         System.out.println("Moving in a diagonal");
         int move = diagonalDirection;
-        updateTankerPos(move);
+        tankerXToUpdate += updateTankerXPos(move);
+        tankerYToUpdate += updateTankerYPos(move);
         return new MoveAction(move);
-    }
-
-    private void updateTankerPos(int moveDirection){
-        switch (moveDirection) {
-            case MoveAction.NORTH:
-                tankerYToUpdate++;
-                break;
-            case MoveAction.SOUTH:
-                tankerYToUpdate--;
-                break;
-            case MoveAction.EAST:
-                tankerXToUpdate++;
-                break;
-            case MoveAction.WEST:
-                tankerXToUpdate--;
-                break;
-            case MoveAction.NORTHEAST:
-                tankerXToUpdate++; tankerYToUpdate++;
-                break;
-            case MoveAction.NORTHWEST:
-                tankerXToUpdate--; tankerYToUpdate++;
-                break;
-            case MoveAction.SOUTHEAST:
-                tankerXToUpdate++; tankerYToUpdate--;
-                break;
-            case MoveAction.SOUTHWEST:
-                tankerXToUpdate--; tankerYToUpdate--;
-                break;
-        }
     }
 }

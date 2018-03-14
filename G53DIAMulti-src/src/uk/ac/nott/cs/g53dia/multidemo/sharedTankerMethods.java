@@ -158,4 +158,34 @@ public class sharedTankerMethods {
         }
         return closest;
     }
+
+    public static int updateTankerXPos(int moveDirection){
+        switch (moveDirection) {
+            case MoveAction.EAST:
+            case MoveAction.NORTHEAST:
+            case MoveAction.SOUTHEAST:
+                return 1;
+            case MoveAction.WEST:
+            case MoveAction.NORTHWEST:
+            case MoveAction.SOUTHWEST:
+                return -1;
+            default:
+                return 0; //Move action is either invalid so won't move or X doesn't change
+        }
+    }
+
+    public static int updateTankerYPos(int moveDirection){
+        switch (moveDirection) {
+            case MoveAction.NORTH:
+            case MoveAction.NORTHEAST:
+            case MoveAction.NORTHWEST:
+                return 1;
+            case MoveAction.SOUTH:
+            case MoveAction.SOUTHEAST:
+            case MoveAction.SOUTHWEST:
+                return -1;
+            default:
+                return 0; //Move action is either invalid so won't move or Y doesn't change
+        }
+    }
 }

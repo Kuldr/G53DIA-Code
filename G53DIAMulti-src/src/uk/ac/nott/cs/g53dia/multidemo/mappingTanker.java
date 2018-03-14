@@ -4,6 +4,8 @@ import uk.ac.nott.cs.g53dia.multilibrary.*;
 
 import java.util.Random;
 
+import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
+
 public class mappingTanker extends Tanker {
 
     private int diagonalDirection;
@@ -50,36 +52,10 @@ public class mappingTanker extends Tanker {
         //Update the environment Representation
         fleet.updateEnvRep(view, tankerX, tankerY);
 
-        updateTankerPos(diagonalDirection);
-        return new MoveAction(diagonalDirection);
-    }
+        //TODO: Search unless low on fuel, in which case refuel and return to the search point
 
-    private void updateTankerPos(int moveDirection){
-        switch (moveDirection) {
-            case MoveAction.NORTH:
-                tankerYToUpdate++;
-                break;
-            case MoveAction.SOUTH:
-                tankerYToUpdate--;
-                break;
-            case MoveAction.EAST:
-                tankerXToUpdate++;
-                break;
-            case MoveAction.WEST:
-                tankerXToUpdate--;
-                break;
-            case MoveAction.NORTHEAST:
-                tankerXToUpdate++; tankerYToUpdate++;
-                break;
-            case MoveAction.NORTHWEST:
-                tankerXToUpdate--; tankerYToUpdate++;
-                break;
-            case MoveAction.SOUTHEAST:
-                tankerXToUpdate++; tankerYToUpdate--;
-                break;
-            case MoveAction.SOUTHWEST:
-                tankerXToUpdate--; tankerYToUpdate--;
-                break;
-        }
+        tankerXToUpdate += updateTankerXPos(diagonalDirection);
+        tankerYToUpdate += updateTankerYPos(diagonalDirection);
+        return new MoveAction(diagonalDirection);
     }
 }
