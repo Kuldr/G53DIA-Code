@@ -43,7 +43,7 @@ public class psybc3Simulator {
         Environment env = new Environment(Tanker.MAX_FUEL/2, r);
 
         //Create a fleet
-//        Fleet fleet = new psybc3Fleet(r);
+//        Fleet fleet = new singleAgent3Fleet(r);
         Fleet fleet = new multiFleet(r);
 
         // Create a GUI window to show the fleet
