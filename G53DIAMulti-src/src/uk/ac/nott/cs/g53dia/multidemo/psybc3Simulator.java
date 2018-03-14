@@ -1,6 +1,8 @@
 package uk.ac.nott.cs.g53dia.multidemo;
 import uk.ac.nott.cs.g53dia.multilibrary.*;
 
+import java.util.Random;
+
 /**
  * An example of how to simulate execution of a tanker agent in the sample (task) environment.
  * <p>
@@ -24,7 +26,7 @@ public class psybc3Simulator {
      * Time for which execution pauses so that GUI can update.
      * Reducing this value causes the simulation to run faster.
      */
-    private static int DELAY = 100;
+    private static int DELAY = 0;
 	
     /**
      * Number of timesteps to execute
@@ -33,12 +35,16 @@ public class psybc3Simulator {
 
     @SuppressWarnings("Duplicates")
     public static void main(String[] args) {
+        // Set the seed for reproducible behaviour
+        // Random without seeding//Random r = new Random();
+        Random r = new Random(14032018);
+
         // Create an environment
-        Environment env = new Environment(Tanker.MAX_FUEL/2);
+        Environment env = new Environment(Tanker.MAX_FUEL/2, r);
 
         //Create a fleet
-//        Fleet fleet = new psybc3Fleet();
-        Fleet fleet = new multiFleet();
+        Fleet fleet = new psybc3Fleet(r);
+//        Fleet fleet = new multiFleet(r);
 
         // Create a GUI window to show the fleet
         TankerViewer tv = new TankerViewer(fleet);
@@ -74,3 +80,4 @@ public class psybc3Simulator {
 }
 
 //TODO: REMOVE THE PRINT STATEMENTS OR WRAP THEM IN DEBUGGING
+//TODO: RECHECK AND EVALUATE THE PSYBC3 WITH THE SHARED VARIABLES

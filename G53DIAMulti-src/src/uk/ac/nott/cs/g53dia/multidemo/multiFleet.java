@@ -14,12 +14,18 @@ public class multiFleet extends Fleet {
     private static int FLEET_SIZE = 4;
 
     private Cell[][] envRep;
+
+    public int getSize() {
+        return size;
+    }
+
     private int size;
 
-    public multiFleet() {
-        // Creation/Seeding of the random function
-        Random r = new Random();
+    public multiFleet(){
+        this(new Random());
+    }
 
+    public multiFleet(Random r) {
         //Create all of the Tankers
         createTankers(r);
 
