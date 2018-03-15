@@ -39,6 +39,7 @@ public class multiFleet extends Fleet {
     }
 
     //NOTE: Score of 54275 for 4 mapping and 3 shared memory agents
+    //      Score of 79134 for 4 mapping and 10 shared memory agents
 
 
     private void createTankers(Random r) {
