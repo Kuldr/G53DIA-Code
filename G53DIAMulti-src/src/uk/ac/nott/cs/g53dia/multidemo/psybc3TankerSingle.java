@@ -120,22 +120,18 @@ public class psybc3TankerSingle extends Tanker {
         //              Note: As they require to be on a specific tile there are no clashes in this tier that need to be resolved.
         //              If a priority 1 action is completed then set the diagonal for travel to a new diagonal
         if( checkRefuel ){
-            System.out.println("Refueling");
             diagonalDirection = newDiagonalDirection(r);
             return new RefuelAction();
         } else if ( checkCollectWaste ){
-            System.out.println("Collecting Waste");
             diagonalDirection = newDiagonalDirection(r);
             return new LoadWasteAction(((Station) getCurrentCell(view)).getTask());
         } else if ( checkDisposeWaste ){
-            System.out.println("Disposing Waste");
             diagonalDirection = newDiagonalDirection(r);
             return new DisposeWasteAction();
         }
 
         //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
         if( checkMoveToFuelPump ){
-            System.out.println("Moving to Fuel Pump");
             int move = directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, size);
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
@@ -144,7 +140,6 @@ public class psybc3TankerSingle extends Tanker {
 
         //Priority 3: Maintaining non critical resources but they need to be taken care of before any further actions can take place
         if( checkAtWasteCapacity ){
-            System.out.println("Moving to Well as waste tank is full");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
@@ -155,7 +150,6 @@ public class psybc3TankerSingle extends Tanker {
         //              Only achievable if you have the required resources
         //              Clashes are resolved by going to the closest of them, with Stations winning draws as collecting waste gains points
         if( !checkCapacityIsGETask && checkMoveToWell ){
-            System.out.println("Moving towards Well as we don't have capacity for the closest station");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
@@ -163,26 +157,22 @@ public class psybc3TankerSingle extends Tanker {
         }
         if( checkMoveToStationWTask && checkMoveToWell ){
             if( checkStationCloserWell ){
-                System.out.println("Moving towards Station as it is closer than Well");
                 int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY, tankerX, tankerY, size);
                 tankerXToUpdate += updateTankerXPos(move);
                 tankerYToUpdate += updateTankerYPos(move);
                 return new MoveAction(move);
             } else {
-                System.out.println("Moving towards Well as it is closer than Station");
                 int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
                 tankerXToUpdate += updateTankerXPos(move);
                 tankerYToUpdate += updateTankerYPos(move);
                 return new MoveAction(move);
             }
         } else if ( checkMoveToStationWTask ){
-            System.out.println("Moving towards Station with task");
             int move = directionToMoveTowards(closestStationWTask.envX, closestStationWTask.envY, tankerX, tankerY, size);
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         } else if ( checkMoveToWell ){
-            System.out.println("Moving towards Well");
             int move = directionToMoveTowards(closestWell.envX, closestWell.envY, tankerX, tankerY, size);
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
@@ -191,7 +181,6 @@ public class psybc3TankerSingle extends Tanker {
 
         //Priority 5: All of the perceptions have failed to result in an action so explore the environment
         //              This is done with the idea to increase our knowledge and potentially find a task
-        System.out.println("Moving in a diagonal");
         int move = diagonalDirection;
         tankerXToUpdate += updateTankerXPos(move);
         tankerYToUpdate += updateTankerYPos(move);
