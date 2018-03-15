@@ -70,48 +70,15 @@ public class psybc3TankerSingle extends Tanker {
         distanceToEnvRep closestWell = findClosestWell(envRep, tankerX, tankerY, size);
 
         //Evaluate each situation
-        boolean checkMoveToFuelPump     = closestFuelPump != null
-                                            && getFuelLevel() <= Math.ceil(closestFuelPump.distance*1.0015+1)
-                                            && !(getCurrentCell(view) instanceof FuelPump);
-                                        // Check if there is enough fuel to get to the nearest fuel pump so long as you are not on a fuel pump
-        boolean checkRefuel             = getCurrentCell(view) instanceof FuelPump
-                                            && getFuelLevel() < MAX_FUEL;
-                                        // Check if you are on a fuel pump and you have less than max fuel
-        boolean checkCollectWaste       = getCurrentCell(view) instanceof Station
-                                            && ((Station) getCurrentCell(view)).getTask() != null
-                                            && getWasteCapacity() > 0;
-                                        // Check if you are on a station, the station has a task and you have capacity to store the waste
-        boolean checkMoveToStationWTask = closestStationWTask != null
-                                            && getWasteCapacity() > 0
-                                            && !isPointFurtherThanFuel(closestStationWTask.envX, closestStationWTask.envY,
-                                                                            closestFuelPump.envX, closestFuelPump.envY,
-                                                                            tankerX, tankerY, getFuelLevel(), size);
-                                        // Check if there is a nearby station with a task, you have waste capacity
-                                        // and you have enough fuel to get to the station and to the next fuel pump w/o running out
-        boolean checkDisposeWaste       = getCurrentCell(view) instanceof Well
-                                            && getWasteLevel() > 0;
-                                        // Check if you are on a well and there is waste to get rid of
-        boolean checkMoveToWell         = closestWell != null
-                                            && getWasteLevel() > 0
-                                            && !isPointFurtherThanFuel(closestWell.envX, closestWell.envY,
-                                                                            closestFuelPump.envX, closestFuelPump.envY,
-                                                                            tankerX, tankerY, getFuelLevel(), size);
-                                        // Check if there is a nearby well, you have waste to get rid of
-                                        // and you have enough fuel to get to the well and to the next fuel pump w/o running out
-        boolean checkStationCloserWell  = closestStationWTask != null
-                                            && closestWell != null
-                                            && closestStationWTask.distance <= closestWell.distance;
-                                        // Check if the nearest station with a task is nearer than the nearest well
-        boolean checkAtWasteCapacity    = getWasteCapacity() <= 0
-                                            && closestWell != null
-                                            && !isPointFurtherThanFuel(closestWell.envX, closestWell.envY,
-                                                                            closestFuelPump.envX, closestFuelPump.envY,
-                                                                            tankerX, tankerY, getFuelLevel(), size);
-                                        // Check if at max waste capacity and then aim to get rid of it if possible
-        boolean checkCapacityIsGETask   = closestStationWTask != null
-                                            && getWasteCapacity() >= ((Station) envRep[closestStationWTask.envX][closestStationWTask.envY]).getTask().getWasteRemaining();
-                                        // Check if there is more waste at the station than there is waste capacity
-                                        // As the task will never have more than the max waste capacity you can't have stations that are forever ignored
+        boolean checkMoveToFuelPump     = checkMoveToFuelPump(closestFuelPump, getFuelLevel(), getCurrentCell(view));
+        boolean checkRefuel             = checkRefuel(getFuelLevel(), getCurrentCell(view));
+        boolean checkCollectWaste       = checkCollectWaste(getWasteCapacity(), getCurrentCell(view));
+        boolean checkMoveToStationWTask = checkMoveToStationWTask(closestStationWTask, getWasteCapacity(), closestFuelPump, tankerX, tankerY, getFuelLevel(), size);
+        boolean checkDisposeWaste       = checkDisposeWaste(getCurrentCell(view), getWasteLevel());
+        boolean checkMoveToWell         = checkMoveToWell(closestWell, getWasteLevel(), closestFuelPump, tankerX, tankerY, getFuelLevel(), size);
+        boolean checkStationCloserWell  = checkStationCloserWell(closestStationWTask, closestWell);
+        boolean checkAtWasteCapacity    = checkAtWasteCapacity(getWasteCapacity(), closestWell, closestFuelPump, tankerX, tankerY, getFuelLevel(), size);
+        boolean checkCapacityIsGETask   = checkCapacityIsGETask(closestStationWTask, getWasteCapacity(), envRep);
 
         //Priority 1: Actions that require you to be on the tile at that time,
         //              unlikely to happen randomly but if relevant should be resolved as.

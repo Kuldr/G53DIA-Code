@@ -215,4 +215,73 @@ public class sharedTankerMethods {
         }
         return envRep;
     }
+
+    public static boolean checkMoveToFuelPump(distanceToEnvRep closestFuelPump, int fuelLevel, Cell currentCell) {
+        // Check if there is enough fuel to get to the nearest fuel pump so long as you are not on a fuel pump
+        return closestFuelPump != null
+                && fuelLevel <= Math.ceil(closestFuelPump.distance*1.0015+1)
+                && !(currentCell instanceof FuelPump);
+    }
+
+    public static boolean checkRefuel(int fuelLevel, Cell currentCell) {
+        // Check if you are on a fuel pump and you have less than max fuel
+        return currentCell instanceof FuelPump
+                && fuelLevel < Tanker.MAX_FUEL;
+    }
+
+    public static boolean checkCollectWaste(int wasteCapacity, Cell currentCell) {
+        // Check if you are on a station, the station has a task and you have capacity to store the waste
+        return currentCell instanceof Station
+                && ((Station) currentCell).getTask() != null
+                && wasteCapacity > 0;
+    }
+
+    public static boolean checkMoveToStationWTask(distanceToEnvRep closestStationWTask, int wasteCapacity, distanceToEnvRep closestFuelPump, int tankerX, int tankerY, int fuelLevel, int size) {
+        // Check if there is a nearby station with a task, you have waste capacity
+        // and you have enough fuel to get to the station and to the next fuel pump w/o running out
+        return closestStationWTask != null
+                && wasteCapacity > 0
+                && !isPointFurtherThanFuel(closestStationWTask.envX, closestStationWTask.envY,
+                closestFuelPump.envX, closestFuelPump.envY,
+                tankerX, tankerY, fuelLevel, size);
+    }
+
+    public static boolean checkDisposeWaste(Cell currentCell, int wasteLevel) {
+        // Check if you are on a well and there is waste to get rid of
+        return currentCell instanceof Well
+                && wasteLevel > 0;
+    }
+
+    public static boolean checkMoveToWell(distanceToEnvRep closestWell, int wasteLevel, distanceToEnvRep closestFuelPump, int tankerX, int tankerY, int fuelLevel, int size ) {
+        // Check if there is a nearby well, you have waste to get rid of
+        // and you have enough fuel to get to the well and to the next fuel pump w/o running out
+        return closestWell != null
+                && wasteLevel > 0
+                && !isPointFurtherThanFuel(closestWell.envX, closestWell.envY,
+                closestFuelPump.envX, closestFuelPump.envY,
+                tankerX, tankerY, fuelLevel, size);
+    }
+
+    public static boolean checkStationCloserWell(distanceToEnvRep closestStationWTask, distanceToEnvRep closestWell) {
+        // Check if the nearest station with a task is nearer than the nearest well
+        return closestStationWTask != null
+                && closestWell != null
+                && closestStationWTask.distance <= closestWell.distance;
+    }
+
+    public static boolean checkAtWasteCapacity(int wasteCapacity, distanceToEnvRep closestWell, distanceToEnvRep closestFuelPump, int tankerX, int tankerY, int fuelLevel, int size) {
+        // Check if at max waste capacity and then aim to get rid of it if possible
+        return wasteCapacity <= 0
+                && closestWell != null
+                && !isPointFurtherThanFuel(closestWell.envX, closestWell.envY,
+                                            closestFuelPump.envX, closestFuelPump.envY,
+                                            tankerX, tankerY, fuelLevel, size);
+    }
+
+    public static boolean checkCapacityIsGETask(distanceToEnvRep closestStationWTask, int wasteCapacity, Cell[][] envRep) {
+        // Check if there is more waste at the station than there is waste capacity
+        // As the task will never have more than the max waste capacity you can't have stations that are forever ignored
+        return closestStationWTask != null
+                && wasteCapacity >= ((Station) envRep[closestStationWTask.envX][closestStationWTask.envY]).getTask().getWasteRemaining();
+    }
 }
