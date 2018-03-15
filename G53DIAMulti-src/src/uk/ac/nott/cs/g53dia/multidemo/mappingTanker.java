@@ -15,6 +15,10 @@ public class mappingTanker extends Tanker {
     private int moveTowardsX;
     private int moveTowardsY;
 
+    private boolean needToReturnToPath = false;
+    private Integer returnToPathX = null;
+    private Integer returnToPathY = null;
+
     private int tankerX;
     private int tankerY;
 
@@ -72,6 +76,11 @@ public class mappingTanker extends Tanker {
         //Evaluate each situation
         boolean checkMoveToFuelPump = checkMoveToFuelPump(closestFuelPump, getFuelLevel(), getCurrentCell(view));
         boolean checkRefuel         = checkRefuel(getFuelLevel(), getCurrentCell(view));
+        if( returnToPathX != null && returnToPathY != null && tankerX == returnToPathX && tankerY == returnToPathY ) {
+            needToReturnToPath = false;
+            returnToPathX = null;
+            returnToPathY = null;
+        }
 
         //TODO: MAKE REFUELING RETURN TO THE ORIGINAL POINT ALONG THE ROUTE ? MAYBE MAYBE NOT BUT WE HAVE BIGGER PROBLEMS RN
 
@@ -85,12 +94,28 @@ public class mappingTanker extends Tanker {
         }
         //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
         if( checkMoveToFuelPump ){
+            if( needToReturnToPath == false ) {
+                //Set the return point before moving
+                needToReturnToPath = true;
+                returnToPathX = tankerX;
+                returnToPathY = tankerY;
+            }
             int move = directionToMoveTowards(closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, fleet.getSize());
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
             return new MoveAction(move);
         }
-        //Priority 3: This agents only task is to explore for the benefit off all other agents
+
+        //Priority 3: Return back to the point on the path where the agent was before diverting to refuel
+        if( needToReturnToPath ) {
+            int move = directionToMoveTowards(coordToEnvIndex(returnToPathX, fleet.getSize()), coordToEnvIndex(returnToPathY, fleet.getSize()), tankerX, tankerY, fleet.getSize());
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
+            return new MoveAction(move);
+        }
+
+
+        //Priority 4: This agents only task is to explore for the benefit off all other agents
         //              As nothing else is taking priority complete this task
         int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
                                             coordToEnvIndex(moveTowardsY, fleet.getSize()),
