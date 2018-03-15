@@ -80,7 +80,7 @@ public class mappingTanker extends Tanker {
                                         && getFuelLevel() < MAX_FUEL;
                                       // Check if you are on a fuel pump and you have less than max fuel
 
-        //TODO: MAKE REFUELING RETURN TO THE ORIGINAL POINT ALONG THE ROUTE
+        //TODO: MAKE REFUELING RETURN TO THE ORIGINAL POINT ALONG THE ROUTE ? MAYBE MAYBE NOT BUT WE HAVE BIGGER PROBLEMS RN
 
         //Priority 1: Actions that require you to be on the tile at that time,
         //              unlikely to happen randomly but if relevant should be resolved as.

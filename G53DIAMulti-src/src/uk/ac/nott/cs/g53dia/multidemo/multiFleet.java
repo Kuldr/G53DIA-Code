@@ -10,10 +10,12 @@ import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
 public class multiFleet extends Fleet {
 
+    private static int NUMBER_OF_MAPPING_AGENTS = 4;
+
     /**
      * Number of tankers in the fleet
      */
-    private static int FLEET_SIZE = 4;
+    private static int FLEET_SIZE = 3 + NUMBER_OF_MAPPING_AGENTS;
 
     private Cell[][] envRep;
 
@@ -36,6 +38,9 @@ public class multiFleet extends Fleet {
         envRep = envRepSetup(size);
     }
 
+    //NOTE: Score of 54275 for 4 mapping and 3 shared memory agents
+
+
     private void createTankers(Random r) {
         // Create mapping tankers in each of the 4 diagonals
         this.add(new mappingTanker(r, MoveAction.NORTHEAST, this));
@@ -43,9 +48,10 @@ public class multiFleet extends Fleet {
         this.add(new mappingTanker(r, MoveAction.SOUTHEAST, this));
         this.add(new mappingTanker(r, MoveAction.SOUTHWEST, this));
 
-//        for (int i=0; i<FLEET_SIZE; i++) {
-//            this.add(new mappingTanker(r));
-//        }
+        // Create the none mapping tankers
+        for (int i=NUMBER_OF_MAPPING_AGENTS; i<FLEET_SIZE; i++) {
+            this.add(new psybc3TankerMulti(r, this));
+        }
     }
 
     public void processView(Cell[][] view, int tankerX, int tankerY) {
