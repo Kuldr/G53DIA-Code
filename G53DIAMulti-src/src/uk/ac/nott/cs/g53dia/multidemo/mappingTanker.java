@@ -69,16 +69,9 @@ public class mappingTanker extends Tanker {
 
         distanceToEnvRep closestFuelPump = findClosestFuelPump(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
 
-        //TODO: Move Booleans into the shared tanker??
-
         //Evaluate each situation
-        boolean checkMoveToFuelPump = closestFuelPump != null
-                                        && getFuelLevel() <= Math.ceil(closestFuelPump.distance*1.0015+1)
-                                        && !(getCurrentCell(view) instanceof FuelPump);
-                                      // Check if there is enough fuel to get to the nearest fuel pump so long as you are not on a fuel pump
-        boolean checkRefuel         = getCurrentCell(view) instanceof FuelPump
-                                        && getFuelLevel() < MAX_FUEL;
-                                      // Check if you are on a fuel pump and you have less than max fuel
+        boolean checkMoveToFuelPump = checkMoveToFuelPump(closestFuelPump, getFuelLevel(), getCurrentCell(view));
+        boolean checkRefuel         = checkRefuel(getFuelLevel(), getCurrentCell(view));
 
         //TODO: MAKE REFUELING RETURN TO THE ORIGINAL POINT ALONG THE ROUTE ? MAYBE MAYBE NOT BUT WE HAVE BIGGER PROBLEMS RN
 
