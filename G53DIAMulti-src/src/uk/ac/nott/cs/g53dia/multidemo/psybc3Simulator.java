@@ -37,7 +37,7 @@ public class psybc3Simulator {
     public static void main(String[] args) {
         // Set the seed for reproducible behaviour
         // Random without seeding//Random r = new Random();
-        Random r = new Random(14032018);
+        Random r = new Random();
 
         // Create an environment
         Environment env = new Environment(Tanker.MAX_FUEL/2, r);

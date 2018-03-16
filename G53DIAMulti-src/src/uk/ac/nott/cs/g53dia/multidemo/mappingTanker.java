@@ -82,8 +82,6 @@ public class mappingTanker extends Tanker {
             returnToPathY = null;
         }
 
-        //TODO: MAKE REFUELING RETURN TO THE ORIGINAL POINT ALONG THE ROUTE ? MAYBE MAYBE NOT BUT WE HAVE BIGGER PROBLEMS RN
-
         //Priority 1: Actions that require you to be on the tile at that time,
         //              unlikely to happen randomly but if relevant should be resolved as.
         //              These task typically will be invoked as we have moved towards these tiles recently to try and complete another task

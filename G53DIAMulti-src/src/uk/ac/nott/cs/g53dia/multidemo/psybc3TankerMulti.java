@@ -16,7 +16,7 @@ public class psybc3TankerMulti extends Tanker {
     private int tankerXToUpdate;
     private int tankerYToUpdate;
 
-    private int diagonalDirection = 4;
+    private int diagonalDirection;
 
     public psybc3TankerMulti(multiFleet fleet) {
 	    this(new Random(), fleet);
