@@ -10,7 +10,7 @@ import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
 public class multiFleet extends Fleet {
 
-    private static int NUMBER_OF_MAPPING_AGENTS = 0;
+    private static int NUMBER_OF_MAPPING_AGENTS = 4;
 
     /**
      * Number of tankers in the fleet
@@ -41,10 +41,10 @@ public class multiFleet extends Fleet {
 
     private void createTankers(Random r) {
         // Create mapping tankers in each of the 4 diagonals
-//        this.add(new mappingTanker(r, MoveAction.NORTHEAST, this));
-//        this.add(new mappingTanker(r, MoveAction.NORTHWEST, this));
-//        this.add(new mappingTanker(r, MoveAction.SOUTHEAST, this));
-//        this.add(new mappingTanker(r, MoveAction.SOUTHWEST, this));
+        this.add(new mappingTanker(r, MoveAction.NORTHEAST, this));
+        this.add(new mappingTanker(r, MoveAction.NORTHWEST, this));
+        this.add(new mappingTanker(r, MoveAction.SOUTHEAST, this));
+        this.add(new mappingTanker(r, MoveAction.SOUTHWEST, this));
 
         // Create the none mapping tankers
         for (int i=NUMBER_OF_MAPPING_AGENTS; i<FLEET_SIZE; i++) {
