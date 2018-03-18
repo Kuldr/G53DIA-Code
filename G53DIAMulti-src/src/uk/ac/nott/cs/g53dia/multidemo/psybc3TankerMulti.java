@@ -62,7 +62,7 @@ public class psybc3TankerMulti extends Tanker {
         fleet.resetTaskList(timestep);
 
         distanceToEnvRep closestFuelPump = findClosestFuelPump(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
-        //distanceToEnvRep closestStationWTask = findClosestTask(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
+        //distanceToEnvRep closestStationWTask = findClosestTask(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize()); // Use this for each tanker to decide
         distanceToEnvRep closestStationWTask = fleet.findClosestTaskNotGiven(tankerX, tankerY);
         distanceToEnvRep closestWell = findClosestWell(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
 
