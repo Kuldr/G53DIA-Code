@@ -15,7 +15,7 @@ public class multiFleet extends Fleet {
     /**
      * Number of tankers in the fleet
      */
-    private static int FLEET_SIZE = 3 + NUMBER_OF_MAPPING_AGENTS;
+    private static int FLEET_SIZE = 10 + NUMBER_OF_MAPPING_AGENTS;
 
     private Cell[][] envRep;
 
@@ -40,11 +40,11 @@ public class multiFleet extends Fleet {
 
 
     private void createTankers(Random r) {
-        // Create mapping tankers in each of the 4 diagonals
-        this.add(new mappingTanker(r, MoveAction.NORTHEAST, this));
-        this.add(new mappingTanker(r, MoveAction.NORTHWEST, this));
-        this.add(new mappingTanker(r, MoveAction.SOUTHEAST, this));
-        this.add(new mappingTanker(r, MoveAction.SOUTHWEST, this));
+        // Create mapping tankers going with initial direction based upon each diagonal, rotating around
+        int[] diagonals = new int[]{MoveAction.NORTHEAST, MoveAction.NORTHWEST, MoveAction.SOUTHEAST, MoveAction.SOUTHWEST};
+        for (int i=0; i<NUMBER_OF_MAPPING_AGENTS; i++) {
+            this.add(new mappingTanker(r, diagonals[i%diagonals.length], this));
+        }
 
         // Create the none mapping tankers
         for (int i=NUMBER_OF_MAPPING_AGENTS; i<FLEET_SIZE; i++) {
