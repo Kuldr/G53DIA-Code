@@ -25,6 +25,8 @@ public class mappingTanker extends Tanker {
     private int tankerXToUpdate;
     private int tankerYToUpdate;
 
+    private int diagonalDirection;
+
     public mappingTanker(int diagonalDirection, multiFleet fleet) {
         this(new Random(), diagonalDirection, fleet);
     }
@@ -42,8 +44,7 @@ public class mappingTanker extends Tanker {
         tankerY = 0;
 
         updateCoordsToMoveTo();
-
-        //TODO: Write tanker setup
+        diagonalDirection = newDiagonalDirection(r);
     }
 
     @Override
@@ -76,11 +77,20 @@ public class mappingTanker extends Tanker {
         //Evaluate each situation
         boolean checkMoveToFuelPump = checkMoveToFuelPump(closestFuelPump, getFuelLevel(), getCurrentCell(view));
         boolean checkRefuel         = checkRefuel(getFuelLevel(), getCurrentCell(view));
+        boolean checkMoveTowards    = !isPointFurtherThanFuel(coordToEnvIndex(moveTowardsX, fleet.getSize()), coordToEnvIndex(moveTowardsY, fleet.getSize()), closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, getFuelLevel(), fleet.getSize());
+        boolean checkReturnToPath;
+        if( returnToPathX != null && returnToPathY != null ) {
+            checkReturnToPath = !isPointFurtherThanFuel(coordToEnvIndex(returnToPathX, fleet.getSize()), coordToEnvIndex(returnToPathY, fleet.getSize()), closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, getFuelLevel(), fleet.getSize());
+        } else {
+            checkReturnToPath = false;
+        }
         if( returnToPathX != null && returnToPathY != null && tankerX == returnToPathX && tankerY == returnToPathY ) {
             needToReturnToPath = false;
             returnToPathX = null;
             returnToPathY = null;
         }
+
+        //TODO: Still have one failing over fuel
 
         //Priority 1: Actions that require you to be on the tile at that time,
         //              unlikely to happen randomly but if relevant should be resolved as.
@@ -88,6 +98,7 @@ public class mappingTanker extends Tanker {
         //              By completing these task it will "end" the inferred long term behaviour of some tasks
         //              Note: As they require to be on a specific tile there are no clashes in this tier that need to be resolved.
         if( checkRefuel ) {
+            diagonalDirection = newDiagonalDirection(r);
             return new RefuelAction();
         }
         //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
@@ -105,7 +116,7 @@ public class mappingTanker extends Tanker {
         }
 
         //Priority 3: Return back to the point on the path where the agent was before diverting to refuel
-        if( needToReturnToPath ) {
+        if( needToReturnToPath && checkReturnToPath ) {
             int move = directionToMoveTowards(coordToEnvIndex(returnToPathX, fleet.getSize()), coordToEnvIndex(returnToPathY, fleet.getSize()), tankerX, tankerY, fleet.getSize());
             tankerXToUpdate += updateTankerXPos(move);
             tankerYToUpdate += updateTankerYPos(move);
@@ -115,9 +126,18 @@ public class mappingTanker extends Tanker {
 
         //Priority 4: This agents only task is to explore for the benefit off all other agents
         //              As nothing else is taking priority complete this task
-        int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
-                                            coordToEnvIndex(moveTowardsY, fleet.getSize()),
-                                            tankerX, tankerY, fleet.getSize());
+        if( checkMoveTowards ){
+            int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
+                                                coordToEnvIndex(moveTowardsY, fleet.getSize()),
+                                                tankerX, tankerY, fleet.getSize());
+            tankerXToUpdate += updateTankerXPos(move);
+            tankerYToUpdate += updateTankerYPos(move);
+            return new MoveAction(move);
+        }
+
+        //Priority 5: All of the perceptions have failed to result in an action so explore the environment
+        //              This is done with the idea to increase our knowledge and potentially find a task
+        int move = diagonalDirection;
         tankerXToUpdate += updateTankerXPos(move);
         tankerYToUpdate += updateTankerYPos(move);
         return new MoveAction(move);
