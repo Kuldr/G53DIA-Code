@@ -65,10 +65,10 @@ public class psybc3Simulator {
             	try {
             	    a.execute(env, t);
             	} catch (OutOfFuelException ofe) {
-            	    System.err.println(ofe.getMessage());
+            	    System.err.println(ofe.getMessage() + " at timestep: " + env.getTimestep());
             	    System.exit(-1);
             	} catch (ActionFailedException afe) {
-            	    System.err.println(afe.getMessage());
+            	    System.err.println(afe.getMessage() + " at timestep: " + env.getTimestep());
             	}
             }
             try {
