@@ -76,8 +76,4 @@ public class psybc3Simulator {
             } catch (Exception e) { }
         }
     }
-	
 }
-
-//TODO: REMOVE THE PRINT STATEMENTS OR WRAP THEM IN DEBUGGING
-//TODO: RECHECK AND EVALUATE THE PSYBC3 WITH THE SHARED VARIABLES

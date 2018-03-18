@@ -71,7 +71,7 @@ public class multiFleet extends Fleet {
 
     public void resetTaskList(long currentTimeStep) {
         if( timestep != currentTimeStep ){
-            for( int k = 0; k < taskListX.length; k++ ){ // Iterate through the given tasks
+            for( int k = 0; k < taskListX.length; k++ ) { // Iterate through the given tasks
                 taskListX[k] = null;
                 taskListY[k] = null;
             }

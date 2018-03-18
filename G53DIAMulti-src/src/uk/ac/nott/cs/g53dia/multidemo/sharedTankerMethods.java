@@ -104,8 +104,8 @@ public class sharedTankerMethods {
         int envY;
     }
 
-    //TODO: TRY AND MAKE NEXT 3 METHODS MORE CONSISTENT
-
+    //Although these 3 methods are similar as instanceof requires a compile time reference
+    // and you can't create cells to pass as objects to test against they have to be separate
     public static distanceToEnvRep findClosestFuelPump(Cell[][] envRep, int tankerX, int tankerY, int size){
         distanceToEnvRep closest = null;
         for(int x = 0; x < envRep.length; x++){
