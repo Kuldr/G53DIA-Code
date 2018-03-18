@@ -50,7 +50,7 @@ public class sharedTankerMethods {
         return true;
     }
 
-    private static int distanceToPointFromCurrentPos(int envIndexX, int envIndexY, int tankerX, int tankerY, int size){
+    public static int distanceToPointFromCurrentPos(int envIndexX, int envIndexY, int tankerX, int tankerY, int size){
         return distanceBetweenPoints(envIndexX, envIndexY, coordToEnvIndex(tankerX, size), coordToEnvIndex(tankerY, size));
     }
 

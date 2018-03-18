@@ -59,9 +59,11 @@ public class psybc3TankerMulti extends Tanker {
 
         //Update the environment Representation
         fleet.processView(view, tankerX, tankerY);
+        fleet.resetTaskList(timestep);
 
         distanceToEnvRep closestFuelPump = findClosestFuelPump(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
-        distanceToEnvRep closestStationWTask = findClosestTask(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
+        //distanceToEnvRep closestStationWTask = findClosestTask(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
+        distanceToEnvRep closestStationWTask = fleet.findClosestTaskNotGiven(tankerX, tankerY);
         distanceToEnvRep closestWell = findClosestWell(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
 
         //Evaluate each situation
