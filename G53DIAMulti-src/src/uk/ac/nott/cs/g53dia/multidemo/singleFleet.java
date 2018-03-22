@@ -9,7 +9,7 @@ public class singleFleet extends Fleet {
     /**
      * Number of tankers in the fleet
      */
-    private static int FLEET_SIZE = 4;
+    private static int FLEET_SIZE = 2;
 
     public int getFleetSize() {
         return FLEET_SIZE;

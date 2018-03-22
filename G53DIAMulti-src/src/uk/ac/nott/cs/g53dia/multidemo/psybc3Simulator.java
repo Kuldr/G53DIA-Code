@@ -43,8 +43,8 @@ public class psybc3Simulator {
         Environment env = new Environment(Tanker.MAX_FUEL/2, r);
 
         //Create a fleet
-//        Fleet fleet = new singleFleet(r);
-        Fleet fleet = new multiFleet(r);
+        Fleet fleet = new singleFleet(r);
+//        Fleet fleet = new multiFleet(r);
 
         // Create a GUI window to show the fleet
 //        TankerViewer tv = new TankerViewer(fleet);
@@ -56,7 +56,7 @@ public class psybc3Simulator {
             // Update the GUI
 //            tv.tick(env);
             if( env.getTimestep() % 10 == 0 ) {
-                System.out.println("Fleet Size " + ((multiFleet) fleet).getFleetSize() + ": " + env.getTimestep());
+                System.out.println("Fleet Size " + ((singleFleet) fleet).getFleetSize() + ": " + env.getTimestep());
             }
 
             for (Tanker t:fleet) {
@@ -78,6 +78,6 @@ public class psybc3Simulator {
                 Thread.sleep(DELAY);
             } catch (Exception e) { }
         }
-        System.out.println("Final Score w/ Fleet Size " + ((multiFleet) fleet).getFleetSize() + " = " + fleet.getScore());
+        System.out.println("Final Score w/ Fleet Size " + ((singleFleet) fleet).getFleetSize() + " = " + fleet.getScore());
     }
 }

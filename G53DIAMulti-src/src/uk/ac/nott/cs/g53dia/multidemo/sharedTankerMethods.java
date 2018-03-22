@@ -43,11 +43,10 @@ public class sharedTankerMethods {
         int distanceToPoint = distanceToPointFromCurrentPos(envIndexX, envIndexY, tankerX, tankerY, size);
         int distanceFromPointToFuel = distanceBetweenPoints(envIndexX, envIndexY, envFuelX, envFuelY);
         int totalDistance = distanceToPoint + distanceFromPointToFuel;
-        if( fuelLevel >= Math.ceil(totalDistance*1.0015+1) ) {
-            return false;
+        if( fuelLevel <= Math.ceil(totalDistance*1.0015+1) ) {
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     public static int distanceToPointFromCurrentPos(int envIndexX, int envIndexY, int tankerX, int tankerY, int size){

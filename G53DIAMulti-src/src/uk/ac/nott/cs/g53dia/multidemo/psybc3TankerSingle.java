@@ -18,7 +18,7 @@ public class psybc3TankerSingle extends Tanker {
     private int tankerXToUpdate;
     private int tankerYToUpdate;
 
-    private int diagonalDirection = 4;
+    private int diagonalDirection;
 
     public psybc3TankerSingle() {
 	    this(new Random());
