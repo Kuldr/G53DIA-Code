@@ -50,8 +50,6 @@ public class mappingTanker extends Tanker {
     @Override
     public Action senseAndAct(Cell[][] view, long timestep) {
 
-        //TODO: OMG HELP THIS IS AWFUL, VERY EASY TO GET STUCK IN A LOOP BUT HOW TO STAY SYSTEMATIC
-
         if( !actionFailed ) {
             // Action passed update the system
             tankerX = tankerXToUpdate;
@@ -90,8 +88,6 @@ public class mappingTanker extends Tanker {
             returnToPathY = null;
         }
 
-        //TODO: Still have one failing over fuel
-
         //Priority 1: Actions that require you to be on the tile at that time,
         //              unlikely to happen randomly but if relevant should be resolved as.
         //              These task typically will be invoked as we have moved towards these tiles recently to try and complete another task
@@ -103,7 +99,7 @@ public class mappingTanker extends Tanker {
         }
         //Priority 2: Maintenance actions that need to be satisfied before other actions to avoid failure due to lack of resources
         if( checkMoveToFuelPump ){
-            if( needToReturnToPath == false ) {
+            if(  !needToReturnToPath ) {
                 //Set the return point before moving
                 needToReturnToPath = true;
                 returnToPathX = tankerX;

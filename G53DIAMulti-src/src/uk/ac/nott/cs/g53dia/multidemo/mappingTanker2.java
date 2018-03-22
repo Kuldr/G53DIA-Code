@@ -72,7 +72,6 @@ public class mappingTanker2 extends Tanker {
         //              By completing these task it will "end" the inferred long term behaviour of some tasks
         //              Note: As they require to be on a specific tile there are no clashes in this tier that need to be resolved.
         if( checkRefuel ) {
-//            diagonalDirection = newDiagonalDirection(r);
             updateCoordsToMoveTo();
             return new RefuelAction();
         }
@@ -96,8 +95,8 @@ public class mappingTanker2 extends Tanker {
     }
 
     private void updateCoordsToMoveTo() {
-        int minimumDelta = -100;
-        int maximumDelta = 100;
+        int minimumDelta = -Tanker.MAX_FUEL/2;
+        int maximumDelta = Tanker.MAX_FUEL/2;
         int deltaX = r.nextInt((maximumDelta - minimumDelta) + 1 ) + minimumDelta;
         int deltaY = r.nextInt((maximumDelta - minimumDelta) + 1 ) + minimumDelta;
         moveTowardsX = tankerX + deltaX;

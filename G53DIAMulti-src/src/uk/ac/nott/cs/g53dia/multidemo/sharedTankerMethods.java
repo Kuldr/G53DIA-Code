@@ -43,8 +43,7 @@ public class sharedTankerMethods {
         int distanceToPoint = distanceToPointFromCurrentPos(envIndexX, envIndexY, tankerX, tankerY, size);
         int distanceFromPointToFuel = distanceBetweenPoints(envIndexX, envIndexY, envFuelX, envFuelY);
         int totalDistance = distanceToPoint + distanceFromPointToFuel;
-        //if( fuelLevel >= Math.ceil(totalDistance*1.0015+1) ) { TODO: Possibly change to this to reduce fails, would have to rerun
-        if( fuelLevel >= totalDistance*1.0015+1 ) {
+        if( fuelLevel >= Math.ceil(totalDistance*1.0015+1) ) {
             return false;
         }
 
