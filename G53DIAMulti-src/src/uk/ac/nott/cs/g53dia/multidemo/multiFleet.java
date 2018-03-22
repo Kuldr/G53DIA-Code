@@ -8,13 +8,13 @@ import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
 public class multiFleet extends Fleet {
 
-    private static int NUMBER_OF_MAPPING_AGENTS = 0;
-    private static int NUMBER_OF_MULTI_AGENTS = 3;
+    private static int NUMBER_OF_MAPPING_AGENTS = 1;
+    private static int NUMBER_OF_MULTI_AGENTS = 2;
 
     /**
      * Number of tankers in the fleet
      */
-    private static int FLEET_SIZE = NUMBER_OF_MULTI_AGENTS + NUMBER_OF_MAPPING_AGENTS;
+    public static int FLEET_SIZE = NUMBER_OF_MULTI_AGENTS + NUMBER_OF_MAPPING_AGENTS;
 
     private Cell[][] envRep;
 
@@ -30,6 +30,10 @@ public class multiFleet extends Fleet {
 
     public int getSize() {
         return size;
+    }
+
+    public int getFleetSize() {
+        return FLEET_SIZE;
     }
 
     public multiFleet() {
@@ -54,9 +58,9 @@ public class multiFleet extends Fleet {
 
     private void createTankers(Random r) {
         // Create mapping tankers going with initial direction based upon each diagonal, rotating around
-        int[] diagonals = new int[]{MoveAction.NORTHEAST, MoveAction.NORTHWEST, MoveAction.SOUTHEAST, MoveAction.SOUTHWEST};
+//        int[] diagonals = new int[]{MoveAction.NORTHEAST, MoveAction.NORTHWEST, MoveAction.SOUTHEAST, MoveAction.SOUTHWEST};
         for (int i=0; i<NUMBER_OF_MAPPING_AGENTS; i++) {
-            this.add(new mappingTanker(r, diagonals[i%diagonals.length], this));
+            this.add(new mappingTanker2(r, this));
         }
 
         // Create the none mapping tankers

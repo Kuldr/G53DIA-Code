@@ -43,6 +43,7 @@ public class sharedTankerMethods {
         int distanceToPoint = distanceToPointFromCurrentPos(envIndexX, envIndexY, tankerX, tankerY, size);
         int distanceFromPointToFuel = distanceBetweenPoints(envIndexX, envIndexY, envFuelX, envFuelY);
         int totalDistance = distanceToPoint + distanceFromPointToFuel;
+        //if( fuelLevel >= Math.ceil(totalDistance*1.0015+1) ) { TODO: Possibly change to this to reduce fails, would have to rerun
         if( fuelLevel >= totalDistance*1.0015+1 ) {
             return false;
         }
@@ -195,7 +196,7 @@ public class sharedTankerMethods {
             for (int y = 0; y<view[x].length; y++) {
                 int xCoord = coordToEnvIndex(viewIndexToCoord(x-tankerPosInView, tankerX), size);
                 int yCoord = coordToEnvIndex(viewIndexToCoord(tankerPosInView-y, tankerY), size);
-                if( xCoord < envRep.length && xCoord >= 0 && yCoord < envRep.length && yCoord >= 0 ) {
+                if( xCoord < envRep.length && xCoord >= 0 && yCoord < envRep.length && yCoord >= 0 && envRep[xCoord][yCoord] == null || envRep[xCoord][yCoord] instanceof Station ) {
                     //If xCoord and yCoord are in the range update the view
                     envRep[xCoord][yCoord] = view[x][y];
                 }

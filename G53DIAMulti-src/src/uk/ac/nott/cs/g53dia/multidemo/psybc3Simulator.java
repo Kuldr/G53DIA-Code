@@ -43,19 +43,22 @@ public class psybc3Simulator {
         Environment env = new Environment(Tanker.MAX_FUEL/2, r);
 
         //Create a fleet
-//        Fleet fleet = new singleAgent3Fleet(r);
+//        Fleet fleet = new singleFleet(r);
         Fleet fleet = new multiFleet(r);
 
         // Create a GUI window to show the fleet
-        TankerViewer tv = new TankerViewer(fleet);
-        tv.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+//        TankerViewer tv = new TankerViewer(fleet);
+//        tv.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
         // Start executing the tankers in the Fleet
         while (env.getTimestep() < DURATION) {
             // Advance the environment timestep
             env.tick();
             // Update the GUI
-            tv.tick(env);
-            
+//            tv.tick(env);
+            if( env.getTimestep() % 10 == 0 ) {
+                System.out.println("Fleet Size " + ((multiFleet) fleet).getFleetSize() + ": " + env.getTimestep());
+            }
+
             for (Tanker t:fleet) {
             	// Get the current view of the tanker
             	Cell[][] view = env.getView(t.getPosition(), Tanker.VIEW_RANGE);
@@ -75,5 +78,6 @@ public class psybc3Simulator {
                 Thread.sleep(DELAY);
             } catch (Exception e) { }
         }
+        System.out.println("Final Score w/ Fleet Size " + ((multiFleet) fleet).getFleetSize() + " = " + fleet.getScore());
     }
 }
