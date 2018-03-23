@@ -194,9 +194,11 @@ public class sharedTankerMethods {
             for (int y = 0; y<view[x].length; y++) {
                 int xCoord = coordToEnvIndex(viewIndexToCoord(x-tankerPosInView, tankerX), size);
                 int yCoord = coordToEnvIndex(viewIndexToCoord(tankerPosInView-y, tankerY), size);
-                if( xCoord < envRep.length && xCoord >= 0 && yCoord < envRep.length && yCoord >= 0 && envRep[xCoord][yCoord] == null || envRep[xCoord][yCoord] instanceof Station ) {
-                    //If xCoord and yCoord are in the range update the view
-                    envRep[xCoord][yCoord] = view[x][y];
+                if( xCoord < envRep.length && xCoord >= 0 && yCoord < envRep.length && yCoord >= 0 ) {
+                    if( envRep[xCoord][yCoord] == null || envRep[xCoord][yCoord] instanceof Station ) {
+                        //If xCoord and yCoord are in the range update the view
+                        envRep[xCoord][yCoord] = view[x][y];
+                    }
                 }
             }
         }

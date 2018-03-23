@@ -8,8 +8,8 @@ import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
 public class multiFleet extends Fleet {
 
-    private static int NUMBER_OF_MAPPING_AGENTS = 1;
-    private static int NUMBER_OF_MULTI_AGENTS = 2;
+    private static int NUMBER_OF_MAPPING_AGENTS = 0;
+    private static int NUMBER_OF_MULTI_AGENTS = 6;
 
     /**
      * Number of tankers in the fleet
