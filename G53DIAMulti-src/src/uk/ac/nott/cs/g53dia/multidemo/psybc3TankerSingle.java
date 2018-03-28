@@ -6,6 +6,7 @@ import java.util.Random;
 
 import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
+//This is the same tanker as in CW1 with no adaptations, methods have been refactored but functionality is unchanged
 public class psybc3TankerSingle extends Tanker {
 
     private int size;
@@ -45,12 +46,6 @@ public class psybc3TankerSingle extends Tanker {
         diagonalDirection = newDiagonalDirection(r);
     }
 
-    /*
-     * The following is a simple demonstration of how to write a
-     * tanker. The code below is very stupid and simply moves the
-     * tanker randomly until the fuel tank is half full, at which
-     * point it returns to a fuel pump to refuel.
-     */
     public Action senseAndAct(Cell[][] view, long timestep) {
 
         if( !actionFailed ) {

@@ -3,23 +3,6 @@ import uk.ac.nott.cs.g53dia.multilibrary.*;
 
 import java.util.Random;
 
-/**
- * An example of how to simulate execution of a tanker agent in the sample (task) environment.
- * <p>
- * Creates a default {@link Environment}, a {@link DemoTanker} and a GUI window 
- * (a {@link TankerViewer}) and executes the Tanker for DURATION days in the environment. 
- * 
- * @author Julian Zappala
- */
-
-/*
- * Copyright (c) 2005 Neil Madden.
- * Copyright (c) 2011 Julian Zappala (jxz@cs.nott.ac.uk)
- * 
- * See the file "license.terms" for information on usage and redistribution
- * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
- */
-
 public class psybc3Simulator {
 
     /**
@@ -33,7 +16,10 @@ public class psybc3Simulator {
      */
     private static int DURATION = 10000;
 
-    @SuppressWarnings("Duplicates")
+    /*
+        Commented out GUI components and added in system out read outs to allow for headless running of the experiments
+     */
+
     public static void main(String[] args) {
         // Set the seed for reproducible behaviour
         // Random without seeding//Random r = new Random();

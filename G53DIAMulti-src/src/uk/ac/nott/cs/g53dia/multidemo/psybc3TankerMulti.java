@@ -6,6 +6,13 @@ import java.util.Random;
 
 import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
+//Same overall design as the single tanker from CW1 with 2 changes to allow for it to work better in a multiagent system
+    //First of all it uses the fleet to have a single shared representation of the environment, by having all tankers
+        //share information it means that each individual can make better informed decisions
+    //Second is that the tankers will get tasks from the fleet to avoid 2 tankers getting the same task, this prevents
+        //a situation where 2 tankers try and collect the same waste and one failing to do so
+        //Note: Tasks are given out based upon which tanker asked first, not which is closest, this could be optimised
+            //further but it works well enough in the current form
 public class psybc3TankerMulti extends Tanker {
 
     private multiFleet fleet;
@@ -39,12 +46,6 @@ public class psybc3TankerMulti extends Tanker {
         diagonalDirection = newDiagonalDirection(r);
     }
 
-    /*
-     * The following is a simple demonstration of how to write a
-     * tanker. The code below is very stupid and simply moves the
-     * tanker randomly until the fuel tank is half full, at which
-     * point it returns to a fuel pump to refuel.
-     */
     public Action senseAndAct(Cell[][] view, long timestep) {
 
         if( !actionFailed ) {
@@ -62,7 +63,6 @@ public class psybc3TankerMulti extends Tanker {
         fleet.resetTaskList(timestep);
 
         distanceToEnvRep closestFuelPump = findClosestFuelPump(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
-        //distanceToEnvRep closestStationWTask = findClosestTask(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize()); // Use this for each tanker to decide
         distanceToEnvRep closestStationWTask = fleet.findClosestTaskNotGiven(tankerX, tankerY);
         distanceToEnvRep closestWell = findClosestWell(fleet.getEnvRep(), tankerX, tankerY, fleet.getSize());
 

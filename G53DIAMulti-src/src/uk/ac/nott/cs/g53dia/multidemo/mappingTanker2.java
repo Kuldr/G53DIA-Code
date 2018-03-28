@@ -6,7 +6,8 @@ import java.util.Random;
 
 import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 
-
+// A tanker set up specifically to aid the other tankers by mapping the environement
+    //This iteration randomly travels around mapping out the environment
 public class mappingTanker2 extends Tanker {
 
     private multiFleet fleet;
@@ -83,7 +84,7 @@ public class mappingTanker2 extends Tanker {
             return new MoveAction(move);
         }
 
-        //Priority 4: This agents only task is to explore for the benefit off all other agents
+        //Priority 5: This agents only task is to explore for the benefit off all other agents
         //              As nothing else is taking priority complete this task
         int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
                                             coordToEnvIndex(moveTowardsY, fleet.getSize()),

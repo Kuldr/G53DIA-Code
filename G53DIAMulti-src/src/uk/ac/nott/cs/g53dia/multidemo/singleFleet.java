@@ -19,6 +19,11 @@ public class singleFleet extends Fleet {
         this(new Random());
     }
 
+    /*
+        Creates a fleet of FLEET_SIZE single agents
+        These are exact copies of the single agents ran in CW1
+            Although some code has been refactored for ease of use the functionality is the same
+    */
     public singleFleet(Random r) {
         // Create the tankers
         for (int i=0; i<FLEET_SIZE; i++) {

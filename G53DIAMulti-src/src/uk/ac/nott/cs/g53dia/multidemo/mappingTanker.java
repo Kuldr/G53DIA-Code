@@ -7,6 +7,9 @@ import java.util.Random;
 import static uk.ac.nott.cs.g53dia.multidemo.sharedTankerMethods.*;
 import static uk.ac.nott.cs.g53dia.multilibrary.MoveAction.*;
 
+// A tanker set up specifically to aid the other tankers by mapping the environement
+    //This itteration systematically maps the environment in a spiral motion covering 1/4 of the map
+    //By starting 4 each in a different diagonal the whole area will be mapped systematically
 public class mappingTanker extends Tanker {
 
     private multiFleet fleet;
@@ -38,6 +41,9 @@ public class mappingTanker extends Tanker {
         this.tankerSetup();
     }
 
+    /* This setup runs at the creation of the tanker so that it
+     * can initialise any settings that it needs too.
+     */
     private void tankerSetup() {
         //Initialise the tanker to the origin
         tankerX = 0;
@@ -76,7 +82,7 @@ public class mappingTanker extends Tanker {
         boolean checkMoveToFuelPump = checkMoveToFuelPump(closestFuelPump, getFuelLevel(), getCurrentCell(view));
         boolean checkRefuel         = checkRefuel(getFuelLevel(), getCurrentCell(view));
         boolean checkMoveTowards    = !isPointFurtherThanFuel(coordToEnvIndex(moveTowardsX, fleet.getSize()), coordToEnvIndex(moveTowardsY, fleet.getSize()), closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, getFuelLevel(), fleet.getSize());
-        boolean checkReturnToPath;
+        boolean checkReturnToPath; //Checks if the tanker has moved off its path to refuel and whether it should return to that point
         if( returnToPathX != null && returnToPathY != null ) {
             checkReturnToPath = !isPointFurtherThanFuel(coordToEnvIndex(returnToPathX, fleet.getSize()), coordToEnvIndex(returnToPathY, fleet.getSize()), closestFuelPump.envX, closestFuelPump.envY, tankerX, tankerY, getFuelLevel(), fleet.getSize());
         } else {
@@ -120,7 +126,7 @@ public class mappingTanker extends Tanker {
         }
 
 
-        //Priority 4: This agents only task is to explore for the benefit off all other agents
+        //Priority 5: This agents only task is to explore for the benefit off all other agents
         //              As nothing else is taking priority complete this task
         if( checkMoveTowards ){
             int move = directionToMoveTowards(coordToEnvIndex(moveTowardsX, fleet.getSize()),
@@ -139,6 +145,7 @@ public class mappingTanker extends Tanker {
         return new MoveAction(move);
     }
 
+    //Calculates the next direction to travel in to systematically map out the area
     private int nextDirection(){
         switch(moveDirection) {
             case NORTHEAST:
@@ -162,6 +169,7 @@ public class mappingTanker extends Tanker {
         }
     }
 
+    //Update the next location to movetowards
     private void updateCoordsToMoveTo() {
         moveTowardsX = coordXToMoveTo();
         moveTowardsY = coordYToMoveTo();
